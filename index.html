@@ -638,940 +638,168 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);font-siz
 
 
 <script>
-// ============================================================
-// GERENCION ESTOQUE v3.1 — JavaScript Completo
-// ============================================================
+const SB_URL='https://vzsvdtlmxxbsqhpitfin.supabase.co';
+const SB_KEY='sb_publishable_rhwR4_UkK33FF3XX1c-oeA_lMKMCANN';
+const sb=(path,opts={})=>fetch(`${SB_URL}/rest/v1/${path}`,{headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,'Content-Type':'application/json','Prefer':'return=representation',...(opts.headers||{})}, ...opts}).then(async r=>{const d=await r.json();if(!r.ok)throw d;return d;});
+// Emoji picker
+const EMOJI_CATS=[{tab:'🍽️',nome:'Alimentos',emojis:['🍖','🥩','🍗','🥚','🧀','🥛','🍳','🥓','🌭','🍔','🍕','🌮','🌯','🥙','🧆','🥪','🥗','🍝','🍜','🍲','🍛','🍣','🍱','🥟','🍤','🍙','🍚','🍘','🍥','🥘','🫕','🍢','🥣','🍡','🍧','🍦','🍰','🎂','🧁','🍮','🍭','🍬','🍫','🍿','🍩','🍪','🥐','🥖','🍞','🥨','🥯','🧇','🥞','🧈','🍟','🧂','🫙','🥫','🍯','🫚','🫒','🥜','🌰']},{tab:'🥦',nome:'Hortifruti',emojis:['🥦','🥬','🥒','🌽','🍅','🍆','🥑','🧄','🧅','🥕','🌶️','🫑','🥔','🍠','🫛','🌿','🌾','🍃','🌱','🍀','🍄','🫘','🍋','🍊','🍇','🍓','🫐','🍈','🍒','🍑','🥭','🍍','🥥','🍌','🍎','🍏','🍐','🍉','🥝','🌵','🌺','🌸','🌹','🌷','💐','🪷']},{tab:'🥤',nome:'Bebidas',emojis:['🥤','🧃','☕','🍵','🧋','🍶','🍺','🍻','🥂','🍷','🥃','🍸','🍹','🧉','🍾','🫖','🥛','🧊','🫗','🧴','🫙','🍬','🍰','🍮','🍭','🍩','🍪','🧁','🎂','🍿']},{tab:'💊',nome:'Saúde',emojis:['💊','💉','🩺','🩹','🩻','🏥','🧬','🔬','🩼','🧪','🩸','🫀','🫁','🧠','🦷','🦴','💪','🚑','⚖️','🧴','🧼','🫧','🪥','💆','🌡️','⚗️','🦺','🧘','🏋️']},{tab:'👗',nome:'Vestuário',emojis:['👗','👘','🥻','👙','👚','👛','👜','👝','🎒','🧳','👒','🎩','🧢','⛑️','👔','👕','👖','🧤','🧣','🧥','🥾','👞','👟','🥿','👠','👡','👢','🩴','🩱','🩲','🩳','🧦','🪖','💍','💎','👑','💄','🪮','🧵','🪡','🧶','🪢','🎀','🕶️','🥽','🦺']},{tab:'🚗',nome:'Automotivo',emojis:['🚗','🚕','🚙','🚌','🚎','🏎️','🚓','🚑','🚒','🚐','🛻','🚚','🚛','🚜','🏍️','🛵','🛺','🚲','🛴','🛹','🚦','🚧','⛽','🛞','🔧','🪛','🔩','⚙️','🪝','🧰','🛢️','⚡','🔋','🪫','🔌','🪜','🚨','🔦','💡','🗺️','🧭','🔑','🗝️']},{tab:'🔧',nome:'Ferramentas',emojis:['🔧','🪛','🔩','⚙️','🔨','⚒️','🛠️','⛏️','🪚','🔗','⛓️','🧲','🪝','🔑','🗝️','🔐','🔒','🔓','💡','🔦','🕯️','🪔','🧰','🗜️','⚖️','🪤','🪣','🪜','📐','📏','✂️','🗃️','🗄️','📦','⚗️','🧫','🪓']},{tab:'🏠',nome:'Casa',emojis:['🏠','🏡','🏘️','🛋️','🪑','🪞','🪟','🛏️','🛁','🚿','🪠','🧹','🧺','🧻','🪣','🧼','🫧','🧴','🪥','🔑','🚪','🪤','🧱','🪵','⚙️','💡','🔌','🪫','🧯','🪜','🛢️','🖼️','🪴','🌡️','⏰','📺','📻','🖥️','🛒','🪝','🔐','🔒']},{tab:'💄',nome:'Beleza',emojis:['💄','💅','💆','💇','🪮','🧴','🧼','🪥','🪒','✂️','💈','🛁','🚿','🌸','🌺','🌹','🌷','💐','🪷','🫧','💎','💍','👑','💋','🎀','🪞','👜','🛍️','🧣','🧤','🧢','👒','🕶️','🥽','🌟','✨','💫','🧖','🌼','🌻','💮','🏵️','🌿']},{tab:'📱',nome:'Tecnologia',emojis:['📱','💻','🖥️','🖨️','⌨️','🖱️','🖲️','💽','💾','💿','📀','📷','📸','📹','🎥','📽️','🎞️','📞','☎️','📟','📠','📺','📻','🧭','⏱️','⏰','⌚','📡','🔋','🪫','🔌','💡','🔦','🕹️','🎮','🤖','🔬','🔭','🛰️','🧮','🔐','💼','📲']},{tab:'🐾',nome:'Pet Shop',emojis:['🐾','🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🦆','🦅','🦉','🦇','🐝','🐛','🦋','🐌','🐞','🐜','🦟','🐢','🐍','🦎','🐠','🐟','🐡','🐬','🐳','🦈','🦭','🐙','🦑','🦐','🦞','🦀','🐚','🪺','🪹','🦮','🐕','🐈','🐇','🐿️','🦔','🦴','🎾','🧴']},{tab:'📚',nome:'Escritório',emojis:['📚','📖','📝','✏️','🖊️','🖋️','✒️','🖌️','🖍️','📌','📍','✂️','🗃️','🗄️','🗑️','📋','📁','📂','🗂️','📓','📔','📒','📕','📗','📘','📙','📄','📃','📑','🗒️','🗓️','📅','📆','📇','📊','📈','📉','🗺️','📏','📐','🔒','🔓','🔏','🔐','💼','🧾','🖇️','📎','🔖','🏷️','🖥️','🖨️','⌨️','🖱️','📮']},{tab:'⚽',nome:'Esporte',emojis:['⚽','🏀','🏈','⚾','🥎','🎾','🏐','🏉','🥏','🎱','🏓','🏸','🏒','🥍','🏑','🏏','🪃','🥅','⛳','🪁','🎣','🤿','🎽','🎿','🛷','🥌','🎯','🏆','🥇','🥈','🥉','🏅','🎖️','🏵️','🎗️','🎟️','🎫','🏋️','⛹️','🤺','⛷️','🏂','🏄','🚣','🧗','🚵','🚴','🎭','🎨','🎬','🎤','🎧','🎸','🥊','🤸','🤼','🤽']},{tab:'🏨',nome:'Hotelaria',emojis:['🏨','🏩','🏪','🏫','🏬','🏭','🏯','🏰','🗼','🗽','🧳','🎫','🎟️','🚢','✈️','🚂','🚁','🛶','⛵','🪂','🏕️','🌅','🌇','🌆','🌃','🌉','🌄','🌠','🎇','🎆','🏮','🪔','🛎️','🔑','🛏️','🛁','🛋️','🪑','🍽️','🥂','🍾','🎊','🎉','🎈','🎁','🎀','🏊','🛀','⛩️']},{tab:'🌿',nome:'Orgânicos',emojis:['🌿','🌱','🌾','🍀','🍃','☘️','🌲','🌳','🌴','🌵','🪸','🪨','🪵','🌊','💧','🌞','🌟','⭐','🌈','❄️','🫙','🧴','🌻','🌸','🌺','🌹','🌷','💐','🪷','🫚','🫒','🥦','🥬','🥒','🧅','🧄','🥕','🍋','🌶️','🥝','🍅','🍏','🥑','🌽','🫛','🫘','🌰','🥜','🍄','🌾','⚗️','🧪']},{tab:'🏗️',nome:'Construção',emojis:['🏗️','🧱','🪵','⚒️','🛠️','⛏️','🔨','🪚','🔧','🪛','🔩','⚙️','🪝','🧰','📐','📏','🗜️','🪜','🧲','💡','🔦','🕯️','🔌','🔋','🛢️','⛽','🪣','🚪','🛋️','🪑','🛏️','🏠','🏡','🏘️','🏚️','🏛️','🏟️','🏗️','🏢','🏬','🌉','🌁','🗺️','🔑','⛓️','🔗','🪤','🏁','🚧','⚠️','⛺','🛖']}];
 
-const SB_URL = 'https://vzsvdtlmxxbsqhpitfin.supabase.co';
-const SB_KEY = 'sb_publishable_rhwR4_UkK33FF3XX1c-oeA_lMKMCANN';
+// Estado
+let REST_ID=null,FUNC_ID=null,FUNC_NOME=null,FUNC_ROLE=null;
+let prodAtual=null,funcAtual=null;
+let todosProds=[],todosFuncs=[],todasCats=[],todasUnits=[];
+let emojiTarget=null,pinDigitos='',movQty=1,subtipoSaida='normal',histFiltro='';
+let emojiTabSel=0;
 
-const sb = (path, opts={}) => fetch(`${SB_URL}/rest/v1/${path}`, {
-  headers: {'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,
-    'Content-Type':'application/json','Prefer':'return=representation',...(opts.headers||{})},
-  ...opts
-}).then(async r => { const d=await r.json(); if(!r.ok) throw d; return d; });
+// Utilitários
+const $=id=>document.getElementById(id);
+const toast=(m,t='ok',d=2600)=>{const el=$('toast');el.textContent=m;el.className='show'+(t==='err'?' err':t==='warn'?' warn':t==='info'?' info':'');clearTimeout(el._t);el._t=setTimeout(()=>el.className='',d);};
+const fmt=v=>(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const fmtN=v=>(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const diasParaVencer=dt=>dt?Math.round((new Date(dt+'T12:00:00')-new Date())/86400000):null;
 
-// ============================================================
-// EMOJI PICKER COMERCIAL v3.1 — Categorias completas
-// ============================================================
-const EMOJI_CATS = [
-  {tab:'🍽️',nome:'Alimentos',emojis:['🍖','🥩','🍗','🥚','🧀','🥛','🍳','🥓','🌭','🍔','🍕','🌮','🌯','🥙','🧆','🥪','🥗','🍝','🍜','🍲','🍛','🍣','🍱','🥟','🍤','🍙','🍚','🍘','🍥','🥘','🫕','🍢','🥣','🍡','🍧','🍦','🍰','🎂','🧁','🍮','🍭','🍬','🍫','🍿','🍩','🍪','🥐','🥖','🍞','🥨','🥯','🧇','🥞','🧈','🍟','🧂','🫙','🥫','🍯','🫚','🫒','🥜','🌰']},
-  {tab:'🥦',nome:'Hortifruti',emojis:['🥦','🥬','🥒','🌽','🍅','🍆','🥑','🧄','🧅','🥕','🌶️','🫑','🥔','🍠','🫛','🌿','🌾','🍃','🪴','🌱','🍀','🍄','🫘','🍋','🍊','🍇','🍓','🫐','🍈','🍒','🍑','🥭','🍍','🥥','🍌','🍎','🍏','🍐','🍉','🍑','🍓','🥝','🍆','🌵','🌺','🌸','🌹','🌷','💐','🪷']},
-  {tab:'🥤',nome:'Bebidas',emojis:['🥤','🧃','☕','🍵','🧋','🍶','🍺','🍻','🥂','🍷','🥃','🍸','🍹','🧉','🍾','🫖','🥛','🧊','🫗','🍦','🧊','🍫','🥃','🧴','🍵','🫙','🫗','🍬','🍰','🍮','🍭','🍩','🍪','🧁','🎂','🍿']},
-  {tab:'💊',nome:'Saúde',emojis:['💊','💉','🩺','🩹','🩻','🏥','🧬','🔬','🩼','🧪','🩸','🫀','🫁','🧠','👁️','🦷','🦴','💪','🚑','⚖️','🧴','🧼','🫧','🪥','💆','🛁','🚿','🌡️','💊','🔴','🧬','🩸','🫙','🌿','🍀','🌱','🧪','⚗️','🩻','🔬','🦺','👨‍⚕️','🩺','🏋️','🧘']},
-  {tab:'👗',nome:'Vestuário',emojis:['👗','👘','🥻','👙','👚','👛','👜','👝','🎒','🧳','👒','🎩','🧢','⛑️','👔','👕','👖','🧤','🧣','🧥','🥾','👞','👟','🥿','👠','👡','👢','🩴','🩱','🩲','🩳','🧦','🪖','💍','💎','👑','💄','🪮','🧵','🪡','🧶','🪢','🎀','🕶️','🥽','🦺','👒','🎓','⛑️']},
-  {tab:'🚗',nome:'Automotivo',emojis:['🚗','🚕','🚙','🚌','🚎','🏎️','🚓','🚑','🚒','🚐','🛻','🚚','🚛','🚜','🏍️','🛵','🛺','🚲','🛴','🛹','🚏','🚦','🚧','⛽','🛞','🔧','🪛','🔩','⚙️','🪝','🧰','🛢️','⚡','🔋','🪫','🔌','🪜','🏁','🚨','🔦','💡','🗺️','🧭','🔑','🗝️','⛓️','🔗','🪤','🔩','⚒️']},
-  {tab:'🔧',nome:'Ferramentas',emojis:['🔧','🪛','🔩','⚙️','🔨','⚒️','🛠️','⛏️','🪚','🔗','⛓️','🧲','🪝','🔑','🗝️','🔐','🔒','🔓','💡','🔦','🕯️','🪔','🧰','🗜️','⚖️','🪤','🪣','🧲','🪜','📐','📏','✂️','🗃️','🗄️','📦','🔮','⚗️','🧫','🧲','🪛','⛏️','🪚','🔨','🛠️','⚒️','🪓','⚙️','🔩','🔧']},
-  {tab:'🏠',nome:'Casa',emojis:['🏠','🏡','🏘️','🛋️','🪑','🪞','🪟','🛏️','🛁','🚿','🪠','🧹','🧺','🧻','🪣','🧼','🫧','🧴','🪥','🔑','🚪','🪤','🧱','🪵','🔩','⚙️','💡','🔌','🪫','🧯','🪜','🛢️','🖼️','🪴','🌡️','⏰','📺','📻','🖥️','🖱️','⌨️','🖨️','🛒','🧹','🧺','🪣','🫧','🪝','🔐','🔒']},
-  {tab:'💄',nome:'Beleza',emojis:['💄','💅','💆','💇','🪮','🧴','🧼','🪥','🪒','✂️','💈','🛁','🚿','🌸','🌺','🌹','🌷','💐','🪷','🫧','💎','💍','👑','💋','🎀','🪞','👜','🛍️','🧣','🧤','🧢','👒','🕶️','🥽','💅','🌟','✨','💫','🧖','🪷','🌸','💐','🌺','🌹','🌼','🌻','💮','🏵️','🌿','🍃']},
-  {tab:'📱',nome:'Tecnologia',emojis:['📱','💻','🖥️','🖨️','⌨️','🖱️','🖲️','💽','💾','💿','📀','📷','📸','📹','🎥','📽️','🎞️','📞','☎️','📟','📠','📺','📻','🧭','⏱️','⏰','⌚','📡','🔋','🪫','🔌','💡','🔦','🕹️','🎮','🤖','🔬','🔭','📡','🛰️','🧮','🔐','🗂️','💼','📲','🖱️','🖲️','📳','📴','📵']},
-  {tab:'🐾',nome:'Pet Shop',emojis:['🐾','🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🦆','🦅','🦉','🦇','🐝','🐛','🦋','🐌','🐞','🐜','🦟','🐢','🐍','🦎','🐠','🐟','🐡','🐬','🐳','🦈','🦭','🐙','🦑','🦐','🦞','🦀','🐚','🪺','🪹','🦮','🐕','🐈','🐇','🐿️','🦔','🐾','🏡','🛁','🧴','🪮','🦴','🎾']},
-  {tab:'📚',nome:'Escritório',emojis:['📚','📖','📝','✏️','🖊️','🖋️','✒️','🖌️','🖍️','📌','📍','✂️','🗃️','🗄️','🗑️','📋','📁','📂','🗂️','📓','📔','📒','📕','📗','📘','📙','📄','📃','📑','🗒️','🗓️','📅','📆','📇','📊','📈','📉','🗺️','📏','📐','🔒','🔓','🔏','🔐','💼','🧾','🗂️','🖇️','📎','🔖','🏷️','🖥️','🖨️','⌨️','🖱️','📮']},
-  {tab:'⚽',nome:'Esporte',emojis:['⚽','🏀','🏈','⚾','🥎','🎾','🏐','🏉','🥏','🎱','🏓','🏸','🏒','🥍','🏑','🏏','🪃','🥅','⛳','🪁','🎣','🤿','🎽','🎿','🛷','🥌','🎯','🏆','🥇','🥈','🥉','🏅','🎖️','🏵️','🎗️','🎟️','🎫','🏋️','⛹️','🤺','⛷️','🏂','🏄','🚣','🧗','🚵','🚴','🎭','🎨','🎬','🎤','🎧','🎸','🥊','🤸','🤼','🤽']},
-  {tab:'🏨',nome:'Hotelaria',emojis:['🏨','🏩','🏪','🏫','🏬','🏭','🏯','🏰','🗼','🗽','🧳','🎫','🎟️','🚢','✈️','🚂','🚁','🛶','⛵','🪂','🏕️','🌅','🌇','🌆','🌃','🌉','🌄','🌠','🎇','🎆','🎑','🏮','🪔','🕌','⛪','🛕','🕍','⛩️','🛖','🏠','🏡','🛎️','🔑','🛏️','🛁','🛋️','🪑','🍽️','🥂','🍾','🎊','🎉','🎈','🎁','🎀','🏊','🛀']},
-  {tab:'🌿',nome:'Orgânicos',emojis:['🌿','🌱','🌾','🍀','🍃','☘️','🌲','🌳','🌴','🌵','🪸','🪨','🪵','🌊','💧','🌞','🌝','🌟','⭐','🌈','❄️','🌿','🫙','🧴','🌻','🌸','🌺','🌹','🌷','💐','🪷','🫚','🫒','🥦','🥬','🥒','🧅','🧄','🥕','🍋','🌶️','🥝','🍅','🍏','🥑','🌽','🫛','🫘','🌰','🥜','🍄','🌾','⚗️','🧪']},
-  {tab:'🏗️',nome:'Construção',emojis:['🏗️','🧱','🪵','⚒️','🛠️','⛏️','🔨','🪚','🔧','🪛','🔩','⚙️','🪝','🧰','📐','📏','🗜️','🪜','🧲','💡','🔦','🕯️','🔌','🔋','🛢️','⛽','🪣','🚪','🛋️','🪑','🛏️','🏠','🏡','🏘️','🏚️','🏛️','🏟️','🏗️','🏢','🏬','🏣','🏤','🏥','🏦','🌉','🌁','🗺️','🔑','⛓️','🔗','🪤','🏁','🚧','⚠️','⛺','🛖']},
-];
+// TELAS — usa classe .on (CSS tem !important)
+const TELAS=['tela1Acesso','telaSetup','telaCodigoFunc','telaLogin','telaApp'];
+function mostrarTela(id){TELAS.forEach(t=>{const el=$(t);if(!el)return;if(t===id)el.classList.add('on');else el.classList.remove('on');});}
 
-// ============================================================
-// ESTADO GLOBAL
-// ============================================================
-let REST_ID=null, FUNC_ID=null, FUNC_NOME=null, FUNC_ROLE=null;
-let prodAtual=null, funcAtual=null;
-let todosProds=[], todosFuncs=[], todasCats=[], todasUnits=[];
-let emojiTarget=null, emojiPickerAberta=false;
-let pinDigitos='', movQty=1, subtipoSaida='normal';
-let histFiltro='';
-
-// ============================================================
-// UTILITÁRIOS
-// ============================================================
-const $ = id => document.getElementById(id);
-const toast = (m,t='ok',d=2600) => {
-  const el=$('toast');el.textContent=m;
-  el.className='show'+(t==='err'?' err':t==='warn'?' warn':t==='info'?' info':'');
-  clearTimeout(el._t);el._t=setTimeout(()=>el.className='',d);
-};
-const fM = id => $(id)&&$(id).classList.toggle('on');
-const fmt = v => (v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-const fmtN = v => (v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-const diasParaVencer = dt => dt ? Math.round((new Date(dt+'T12:00:00')-new Date())/86400000) : null;
-
-
-// ============================================================
 // SESSÃO 24h (AJUSTE 7)
-// ============================================================
-const salvarSessao = uid => {
-  if(!$('chkLembrar')||!$('chkLembrar').checked) return;
-  localStorage.setItem('ge_sess_uid_'+REST_ID, uid);
-  localStorage.setItem('ge_sess_ts_'+REST_ID, Date.now());
-};
-const verificarSessao = () => {
-  if(!REST_ID) return false;
-  const uid=localStorage.getItem('ge_sess_uid_'+REST_ID);
-  const ts=parseInt(localStorage.getItem('ge_sess_ts_'+REST_ID)||'0');
-  if(!uid||!ts) return false;
-  if(Date.now()-ts > 86400000){ limparSessao(); return false; }
-  return uid;
-};
-const limparSessao = () => {
-  localStorage.removeItem('ge_sess_uid_'+REST_ID);
-  localStorage.removeItem('ge_sess_ts_'+REST_ID);
-};
+const salvarSessao=uid=>{if(!$('chkLembrar')||!$('chkLembrar').checked)return;localStorage.setItem('ge_sess_uid_'+REST_ID,uid);localStorage.setItem('ge_sess_ts_'+REST_ID,Date.now());};
+const verificarSessao=()=>{if(!REST_ID)return false;const uid=localStorage.getItem('ge_sess_uid_'+REST_ID);const ts=parseInt(localStorage.getItem('ge_sess_ts_'+REST_ID)||'0');if(!uid||!ts)return false;if(Date.now()-ts>86400000){limparSessao();return false;}return uid;};
+const limparSessao=()=>{localStorage.removeItem('ge_sess_uid_'+REST_ID);localStorage.removeItem('ge_sess_ts_'+REST_ID);};
 
-// ============================================================
-// TELAS
-// ============================================================
-const TELAS = ['tela1Acesso','telaSetup','telaCodigoFunc','telaLogin','telaApp'];
-const mostrarTela = id => TELAS.forEach(t => {
-  const el=$(t); if(!el) return;
-  el.style.display = t===id ? ((['tela1Acesso','telaSetup','telaCodigoFunc','telaLogin'].includes(t))?'flex':'block') : 'none';
-});
+// LINK URL (AJUSTE 3)
+const capturarCodigoDaURL=()=>{const p=new URLSearchParams(window.location.search);const cod=p.get('cod');if(cod){localStorage.setItem('ge_cod_pendente',cod);window.history.replaceState({},'',window.location.pathname);return cod;}return localStorage.getItem('ge_cod_pendente');};
 
-// ============================================================
-// PÁGINAS INTERNAS
-// ============================================================
-function irPg(pg, btn) {
-  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-  const el=$('pg-'+pg); if(el) el.classList.add('on');
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
-  if(btn) btn.classList.add('on');
-  $('fab') && ($('fab').style.display = pg==='produtos'?'flex':'none');
-  $('helpBtn') && ($('helpBtn').style.display = ['produtos','hist','config'].includes(pg)?'flex':'none');
-  if(pg==='dash') renderDash();
-  if(pg==='produtos') renderProds();
-  if(pg==='hist') renderHist();
-  if(pg==='insights') renderInsights();
-  if(pg==='config') { if(FUNC_ROLE==='proprietario'){carregarConfig();} else toast('Acesso restrito','warn'); }
-}
+// WHATSAPP +55 (AJUSTE 2)
+function maskWpp(el){let v=el.value.replace(/\D/g,'');if(v.length>11)v=v.slice(0,11);if(v.length>10)v=`(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;else if(v.length>6)v=`(${v.slice(0,2)}) ${v.slice(2,6)}-${v.slice(6)}`;else if(v.length>2)v=`(${v.slice(0,2)}) ${v.slice(2)}`;el.value=v;}
 
-// ============================================================
-// LINK DE ACESSO (AJUSTE 3) — captura código da URL
-// ============================================================
-const capturarCodigoDaURL = () => {
-  const p=new URLSearchParams(window.location.search);
-  const cod=p.get('cod');
-  if(cod){ localStorage.setItem('ge_cod_pendente',cod); window.history.replaceState({},'',window.location.pathname); return cod; }
-  return localStorage.getItem('ge_cod_pendente');
-};
+// TIPO NEGÓCIO (AJUSTE 5)
+const TIPOS_NEG=['🍽️ Restaurante','🥪 Lanchonete','🥐 Padaria e Confeitaria','🍦 Sorveteria','🍕 Pizzaria','🍣 Susheria','🥩 Churrascaria','☕ Cafeteria','🍺 Bar e Petiscaria','🍰 Doceria','🥗 Sucos e Saladas','🫙 Mercearia','🛒 Supermercado','🥩 Açougue','🐟 Peixaria','🥦 Hortifrúti','💊 Farmácia','🧴 Perfumaria','💄 Salão de Beleza','💅 Estética','🧖 Spa','👗 Moda e Vestuário','👟 Calçados','👒 Brechó','🚗 Oficina Mecânica','🔧 Auto Peças','🚘 Lava Jato','🏍️ Moto Peças','🔨 Ferragens','🏗️ Construtora','🪟 Vidraçaria','🛋️ Móveis','🏠 Imobiliária','📱 Eletrônicos','💻 Informática','📚 Papelaria','🎨 Artesanato','🐾 Pet Shop','🌿 Produtos Naturais','⚽ Esportes','🏋️ Academia','🎭 Eventos','🌸 Floricultura','📷 Fotografia','🔐 Segurança','🧹 Limpeza','🪴 Jardinagem','🍀 Ervanário'];
+function mostrarSugsTipo(val,sufx){const el=$('tipoSugs'+sufx);if(!el)return;if(!val.trim()){el.style.display='none';return;}const m=TIPOS_NEG.filter(t=>t.toLowerCase().includes(val.toLowerCase())).slice(0,7);if(!m.length){el.style.display='none';return;}el.innerHTML=m.map(t=>`<div class="tipo-sug-item" onclick="escolherTipo('${sufx}','${t.replace(/'/g,"\\'")}')">${t}</div>`).join('');el.style.display='block';}
+function escolherTipo(sufx,val){const inp=sufx==='S'?$('sTipo'):$('cfgTipo');if(inp)inp.value=val;const s=$('tipoSugs'+sufx);if(s)s.style.display='none';}
 
-// ============================================================
-// WHATSAPP +55 FIXO — máscara (AJUSTE 2)
-// ============================================================
-function maskWpp(el) {
-  let v=el.value.replace(/\D/g,'');
-  if(v.length>11)v=v.slice(0,11);
-  if(v.length>10) v=`(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
-  else if(v.length>6) v=`(${v.slice(0,2)}) ${v.slice(2,6)}-${v.slice(6)}`;
-  else if(v.length>2) v=`(${v.slice(0,2)}) ${v.slice(2)}`;
-  el.value=v;
-}
-const wppNum = el => '55'+((el&&el.value||'').replace(/\D/g,''));
+// EMOJI PICKER (AJUSTE 6)
+function toggleEmoji(){const el=$('emojiPicker');if(!el)return;if(el.style.display==='block'){el.style.display='none';return;}emojiTarget='cat';renderEmojiAba(0);el.style.display='block';}
+function renderEmojiAba(idx){emojiTabSel=idx;const tabs=$('emojiTabs');const grid=$('emojiGrid');if(!tabs||!grid)return;tabs.innerHTML=EMOJI_CATS.map((c,i)=>`<button class="emoji-tab ${i===idx?'on':''}" onclick="renderEmojiAba(${i})" title="${c.nome}">${c.tab}</button>`).join('');grid.innerHTML=EMOJI_CATS[idx].emojis.map(e=>`<button class="emoji-o" onclick="selecionarEmoji('${e}')">${e}</button>`).join('');}
+function selecionarEmoji(e){if(emojiTarget==='cat'){$('emjBtn')&&($('emjBtn').textContent=e);$('novaCatIco')&&($('novaCatIco').value=e);}else if(emojiTarget==='prod'){const mpE=$('mpEmojiBtn');if(mpE)mpE.textContent=e;}$('emojiPicker').style.display='none';}
 
-// ============================================================
-// TIPO DE NEGÓCIO — autocomplete (AJUSTE 5)
-// ============================================================
-const TIPOS_NEG = ['🍽️ Restaurante','🥪 Lanchonete','🥐 Padaria e Confeitaria','🍦 Sorveteria','🍕 Pizzaria','🍣 Susheria','🥩 Churrascaria','☕ Cafeteria e Café','🍺 Bar e Petiscaria','🍰 Doceria','🥗 Sucos e Saladas','🫙 Mercearia e Empório','🛒 Supermercado','🥩 Açougue','🐟 Peixaria','🥦 Hortifrúti','💊 Farmácia e Drogaria','🧴 Perfumaria e Cosméticos','💄 Salão de Beleza','💅 Studio de Estética','🧖 Spa e Bem-Estar','👗 Moda e Vestuário','👟 Calçados e Acessórios','👒 Brechó','🚗 Oficina Mecânica','🔧 Auto Peças','🚘 Lava Jato','🏍️ Moto Peças','🔨 Ferragens e Construção','🏗️ Construtora','🪟 Esquadrias e Vidraçaria','🛋️ Móveis e Decoração','🏠 Imobiliária','📱 Eletrônicos e Assistência','💻 Informática e Games','📚 Papelaria e Livraria','🎨 Artesanato','🐾 Pet Shop e Veterinária','🌿 Produtos Naturais','⚽ Artigos Esportivos','🏋️ Academia e Fitness','🎭 Eventos e Festas','🌸 Floricultura','📷 Fotografia e Estúdio','🔐 Segurança','🧹 Produtos de Limpeza','🪴 Garden e Jardinagem','🍀 Ervanário'];
+// STATUS VALIDADE (AJUSTE 1)
+function labelVal(p){const dtVal=p.data_validade,dtFab=p.data_fabricacao;if(!dtVal)return{ico:'⬜',cls:'',txt:'Sem validade'};if(dtFab&&new Date(dtFab+'T12:00:00')>new Date())return{ico:'⚠️',cls:'warn',txt:'Fab. futura'};const dias=diasParaVencer(dtVal);if(dias===null)return{ico:'⬜',cls:'',txt:''};if(dias<0)return{ico:'🔴',cls:'venc',txt:'VENCIDO'};if(dias<=7)return{ico:'🔴',cls:'venc',txt:`Vence em ${dias}d`};if(dias<=30)return{ico:'⚠️',cls:'warn',txt:`${dias} dias`};return{ico:'✅',cls:'ok',txt:`${dias} dias`};}
+function atualizarStatusVal(){const el=$('mpValStatus');if(!el)return;const dtVal=$('mpVal')&&$('mpVal').value;const dtFab=$('mpFab')&&$('mpFab').value;if(!dtVal){el.style.display='none';return;}const s=labelVal({data_validade:dtVal,data_fabricacao:dtFab||null});el.textContent=s.ico+' '+s.txt;el.style.display='block';el.style.background=s.cls==='venc'?'var(--rd2)':s.cls==='warn'?'var(--am2)':'var(--gn2)';el.style.color=s.cls==='venc'?'var(--rd)':s.cls==='warn'?'var(--am)':'var(--gn)';el.style.border=`1px solid ${s.cls==='venc'?'var(--rd3)':s.cls==='warn'?'var(--am3)':'var(--gn3)'}`;}
 
-function mostrarSugsTipo(val, sufx) {
-  const sugsEl=$('tipoSugs'+sufx); if(!sugsEl) return;
-  if(!val.trim()){ sugsEl.style.display='none'; return; }
-  const v=val.toLowerCase();
-  const m=TIPOS_NEG.filter(t=>t.toLowerCase().includes(v)).slice(0,7);
-  if(!m.length){ sugsEl.style.display='none'; return; }
-  sugsEl.innerHTML=m.map(t=>`<div class="tipo-sug-item" onclick="escolherTipo('${sufx}','${t.replace(/'/g,"\\'")}')"><span>${t}</span></div>`).join('');
-  sugsEl.style.display='block';
-}
-function escolherTipo(sufx, val) {
-  const inp = sufx==='S' ? $('sTipo') : $('cfgTipo');
-  if(inp) inp.value=val;
-  const sugs=$('tipoSugs'+sufx); if(sugs) sugs.style.display='none';
-}
+// SETUP
+async function criarEstabelecimento(){const nome=$('sNome').value.trim();const tipo=$('sTipo').value.trim();const dono=$('sDonoNome').value.trim();const pin=$('sPin').value;if(!nome||!tipo||!dono||!pin)return toast('Preencha todos os campos','err');if(pin.length!==4||isNaN(pin))return toast('PIN deve ter 4 números','err');try{const cod=Math.random().toString(36).substring(2,8).toUpperCase();const r=await sb('ge_restaurantes',{method:'POST',body:JSON.stringify({nome_restaurante:nome,tipo_negocio:tipo,nome_proprietario:dono,pin_proprietario:pin,codigo_acesso:cod})});REST_ID=r[0].id;localStorage.setItem('ge_rest_id',REST_ID);localStorage.removeItem('ge_cod_pendente');FUNC_NOME=nome;FUNC_ROLE='proprietario';toast('✅ Estabelecimento criado!');setTimeout(()=>entrarApp(),1000);}catch(e){toast('Erro: '+JSON.stringify(e),'err');}}
 
-// ============================================================
-// EMOJI PICKER — abas comerciais (AJUSTE 6)
-// ============================================================
-let emojiAbaSel=0;
-function toggleEmoji() {
-  const el=$('emojiPicker'); if(!el) return;
-  const vis=el.style.display==='block';
-  el.style.display=vis?'none':'block';
-  if(!vis) renderEmojiAba(0);
-}
+// CÓDIGO FUNCIONÁRIO
+async function entrarComCodigo(){const cod=$('codigoFunc').value.trim().toUpperCase();if(cod.length<4)return toast('Código inválido','err');try{const r=await sb(`ge_restaurantes?codigo_acesso=eq.${cod}&select=*`);if(!r.length)return toast('Código não encontrado','err');REST_ID=r[0].id;localStorage.setItem('ge_rest_id',REST_ID);$('loginNome').textContent=r[0].nome_restaurante;$('loginTipo').textContent=r[0].tipo_negocio||'';mostrarTela('telaLogin');pinDigitos='';renderPin();}catch(e){toast('Erro: '+e.message,'err');}}
 
-function renderEmojiAba(idx) {
-  emojiAbaSel=idx;
-  const tabs=$('emojiTabs'); const grid=$('emojiGrid');
-  if(!tabs||!grid) return;
-  tabs.innerHTML=EMOJI_CATS.map((c,i)=>`<button class="emoji-tab ${i===idx?'on':''}" onclick="renderEmojiAba(${i})" title="${c.nome}">${c.tab}</button>`).join('');
-  grid.innerHTML=EMOJI_CATS[idx].emojis.map(e=>`<button class="emoji-o" onclick="selecionarEmoji('${e}')">${e}</button>`).join('');
-}
+// PIN
+function pinD(d){if(pinDigitos.length>=4)return;pinDigitos+=d;renderPin();if(pinDigitos.length===4)setTimeout(validarPin,120);}
+function pinDel(){if(pinDigitos.length>0){pinDigitos=pinDigitos.slice(0,-1);renderPin();}}
+function renderPin(){for(let i=0;i<4;i++){const el=$('pd'+i);if(el)el.classList.toggle('filled',i<pinDigitos.length);}const err=$('pinErro');if(err)err.textContent='';}
+async function validarPin(){try{const rp=await sb(`ge_restaurantes?id=eq.${REST_ID}&pin_proprietario=eq.${pinDigitos}&select=id,nome_restaurante`);if(rp.length){FUNC_ID=null;FUNC_NOME=rp[0].nome_restaurante;FUNC_ROLE='proprietario';salvarSessao('PROP');await entrarApp();return;}const rf=await sb(`ge_funcionarios?restaurante_id=eq.${REST_ID}&pin=eq.${pinDigitos}&select=*`);if(rf.length){FUNC_ID=rf[0].id;FUNC_NOME=rf[0].nome;FUNC_ROLE='funcionario';salvarSessao(rf[0].id);await entrarApp();return;}pinDigitos='';renderPin();const err=$('pinErro');if(err){err.textContent='PIN incorreto. Tente novamente.';setTimeout(()=>err.textContent='',2000);}}catch(e){toast('Erro: '+e.message,'err');pinDigitos='';renderPin();}}
+function trocarEst(){if(confirm('Sair e trocar de estabelecimento?')){REST_ID=null;FUNC_ID=null;FUNC_NOME=null;FUNC_ROLE=null;localStorage.removeItem('ge_rest_id');limparSessao();mostrarTela('tela1Acesso');}}
 
-function selecionarEmoji(e) {
-  if(emojiTarget==='cat') {
-    $('emjBtn').textContent=e;
-    $('novaCatIco').value=e;
-  } else if(emojiTarget==='prod') {
-    $('mpEmoji')&&($('mpEmoji').value=e);
-    $('mpEmojiBtn')&&($('mpEmojiBtn').textContent=e);
-  }
-  $('emojiPicker').style.display='none';
-}
-
-function abrirEmojiProd() {
-  emojiTarget='prod';
-  const el=$('emojiPicker'); if(!el) return;
-  el.style.display='block';
-  renderEmojiAba(0);
-}
-
-
-// ============================================================
-// STATUS DE VALIDADE (AJUSTE 1)
-// ============================================================
-function labelVal(p) {
-  const dtVal=p.data_validade, dtFab=p.data_fabricacao;
-  if(!dtVal) return {ico:'⬜',cls:'',txt:'Sem validade'};
-  if(dtFab){
-    const fab=new Date(dtFab+'T12:00:00');
-    if(fab>new Date()) return {ico:'⚠️',cls:'warn',txt:'Fab. futura'};
-  }
-  const dias=diasParaVencer(dtVal);
-  if(dias===null) return {ico:'⬜',cls:'',txt:''};
-  if(dias<0) return {ico:'🔴',cls:'venc',txt:'VENCIDO'};
-  if(dias<=7) return {ico:'🔴',cls:'venc',txt:`Vence em ${dias}d`};
-  if(dias<=30) return {ico:'⚠️',cls:'warn',txt:`${dias} dias`};
-  return {ico:'✅',cls:'ok',txt:`${dias} dias`};
-}
-
-function atualizarStatusVal() {
-  const el=$('mpValStatus'); if(!el) return;
-  const dtVal=$('mpVal')&&$('mpVal').value;
-  const dtFab=$('mpFab')&&$('mpFab').value;
-  if(!dtVal){ el.style.display='none'; return; }
-  const s=labelVal({data_validade:dtVal,data_fabricacao:dtFab||null});
-  el.textContent=s.ico+' '+s.txt;
-  el.style.display='block';
-  el.style.background=s.cls==='venc'?'var(--rd2)':s.cls==='warn'?'var(--am2)':'var(--gn2)';
-  el.style.color=s.cls==='venc'?'var(--rd)':s.cls==='warn'?'var(--am)':'var(--gn)';
-  el.style.border=`1px solid ${s.cls==='venc'?'var(--rd3)':s.cls==='warn'?'var(--am3)':'var(--gn3)'}`;
-}
-
-// ============================================================
-// SETUP — criar estabelecimento
-// ============================================================
-async function criarEstabelecimento() {
-  const nome=$('sNome').value.trim();
-  const tipo=$('sTipo').value.trim();
-  const dono=$('sDonoNome').value.trim();
-  const pin=$('sPin').value;
-  if(!nome||!tipo||!dono||!pin) return toast('Preencha todos os campos','err');
-  if(pin.length!==4||isNaN(pin)) return toast('PIN deve ter 4 números','err');
-  try {
-    const cod=Math.random().toString(36).substring(2,8).toUpperCase();
-    const r=await sb('ge_restaurantes',{method:'POST',body:JSON.stringify({
-      nome_restaurante:nome,tipo_negocio:tipo,nome_proprietario:dono,
-      pin_proprietario:pin,codigo_acesso:cod
-    })});
-    REST_ID=r[0].id;
-    localStorage.setItem('ge_rest_id',REST_ID);
-    localStorage.removeItem('ge_cod_pendente');
-    FUNC_NOME=nome; FUNC_ROLE='proprietario';
-    toast('✅ Estabelecimento criado!');
-    setTimeout(()=>entrarApp(),1000);
-  } catch(e){ toast('Erro: '+JSON.stringify(e),'err'); }
-}
-
-// ============================================================
-// PRIMEIRO ACESSO — buscar por código
-// ============================================================
-async function entrarComCodigo() {
-  const cod=$('codigoFunc').value.trim().toUpperCase();
-  if(cod.length<4) return toast('Código inválido','err');
-  try {
-    const r=await sb(`ge_restaurantes?codigo_acesso=eq.${cod}&select=*`);
-    if(!r.length) return toast('Código não encontrado','err');
-    REST_ID=r[0].id;
-    localStorage.setItem('ge_rest_id',REST_ID);
-    $('loginNome').textContent=r[0].nome_restaurante;
-    $('loginTipo').textContent=r[0].tipo_negocio||'';
-    mostrarTela('telaLogin');
-    pinDigitos=''; renderPin();
-  } catch(e){ toast('Erro: '+e.message,'err'); }
-}
-
-// ============================================================
-// PIN — teclado numérico
-// ============================================================
-function pinD(d) {
-  if(pinDigitos.length>=4) return;
-  pinDigitos+=d;
-  renderPin();
-  if(pinDigitos.length===4) setTimeout(validarPin,120);
-}
-function pinDel() { if(pinDigitos.length>0){ pinDigitos=pinDigitos.slice(0,-1); renderPin(); } }
-function renderPin() {
-  for(let i=0;i<4;i++){
-    const el=$('pd'+i); if(!el) continue;
-    el.classList.toggle('filled',i<pinDigitos.length);
-  }
-  const err=$('pinErro'); if(err) err.textContent='';
-}
-async function validarPin() {
-  try {
-    // Tentar proprietário
-    const rp=await sb(`ge_restaurantes?id=eq.${REST_ID}&pin_proprietario=eq.${pinDigitos}&select=id,nome_restaurante`);
-    if(rp.length){
-      FUNC_ID=null; FUNC_NOME=rp[0].nome_restaurante; FUNC_ROLE='proprietario';
-      salvarSessao('PROP');
-      await entrarApp(); return;
-    }
-    // Tentar funcionário
-    const rf=await sb(`ge_funcionarios?restaurante_id=eq.${REST_ID}&pin=eq.${pinDigitos}&select=*`);
-    if(rf.length){
-      FUNC_ID=rf[0].id; FUNC_NOME=rf[0].nome; FUNC_ROLE='funcionario';
-      salvarSessao(rf[0].id);
-      await entrarApp(); return;
-    }
-    pinDigitos=''; renderPin();
-    const err=$('pinErro'); if(err){ err.textContent='PIN incorreto. Tente novamente.'; setTimeout(()=>err.textContent='',2000); }
-  } catch(e){ toast('Erro: '+e.message,'err'); pinDigitos=''; renderPin(); }
-}
-
-function trocarEst() {
-  if(confirm('Sair e trocar de estabelecimento?')){
-    REST_ID=null; FUNC_ID=null; FUNC_NOME=null; FUNC_ROLE=null;
-    localStorage.removeItem('ge_rest_id'); limparSessao();
-    mostrarTela('tela1Acesso');
-  }
-}
-
-// ============================================================
 // ENTRAR NO APP
-// ============================================================
-async function entrarApp() {
-  mostrarTela('telaApp');
-  $('topNome').textContent=FUNC_NOME||'Gerencion Estoque';
-  $('topUser').textContent=FUNC_ROLE==='proprietario'?'👑 Proprietário':'👤 '+FUNC_NOME;
-  const navCfg=$('navCfg'); if(navCfg) navCfg.style.display=FUNC_ROLE==='proprietario'?'flex':'none';
-  await Promise.all([carregarProds(),carregarFuncs(),carregarCats(),carregarUnits()]);
-  irPg('dash',document.querySelector('.nav-btn'));
-}
+async function entrarApp(){mostrarTela('telaApp');$('topNome').textContent=FUNC_NOME||'Gerencion Estoque';$('topUser').textContent=FUNC_ROLE==='proprietario'?'👑 Proprietário':'👤 '+FUNC_NOME;const navCfg=$('navCfg');if(navCfg)navCfg.style.display=FUNC_ROLE==='proprietario'?'flex':'none';await Promise.all([carregarProds(),carregarFuncs(),carregarCats(),carregarUnits()]);document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));$('pg-dash')&&$('pg-dash').classList.add('on');document.querySelectorAll('.nav-btn').forEach((b,i)=>{if(i===0)b.classList.add('on');else b.classList.remove('on');});renderDash();}
+function sair(){if(confirm('Deseja sair?')){limparSessao();REST_ID=null;FUNC_ID=null;FUNC_NOME=null;FUNC_ROLE=null;pinDigitos='';mostrarTela('tela1Acesso');}}
 
-function sair() {
-  if(confirm('Deseja sair?')){ limparSessao(); REST_ID=null; FUNC_ID=null; FUNC_NOME=null; FUNC_ROLE=null; pinDigitos=''; mostrarTela('tela1Acesso'); }
-}
+// PÁGINAS
+function irPg(pg,btn){document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));const el=$('pg-'+pg);if(el)el.classList.add('on');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');const fab=$('fab');if(fab)fab.style.display=pg==='produtos'?'flex':'none';const hb=$('helpBtn');if(hb)hb.style.display=['produtos','hist','config'].includes(pg)?'flex':'none';if(pg==='dash')renderDash();if(pg==='produtos')renderProds();if(pg==='hist')renderHist();if(pg==='insights')renderInsights();if(pg==='config'){if(FUNC_ROLE==='proprietario')carregarConfig();else toast('Acesso restrito','warn');}}
 
-
-// ============================================================
 // PRODUTOS
-// ============================================================
-async function carregarProds() {
-  try { todosProds=await sb(`ge_produtos?restaurante_id=eq.${REST_ID}&select=*,ge_fornecedores(nome)&order=nome.asc`); }
-  catch(e){ todosProds=[]; toast('Erro ao carregar produtos','err'); }
-}
+async function carregarProds(){try{todosProds=await sb(`ge_produtos?restaurante_id=eq.${REST_ID}&select=*&order=nome.asc`);}catch(e){todosProds=[];}}
+function renderProds(){const busca=($('sprod')&&$('sprod').value||'').toLowerCase();const cnt=$('prodList');if(!cnt)return;let lista=todosProds.filter(p=>!busca||p.nome.toLowerCase().includes(busca)||(p.categoria||'').toLowerCase().includes(busca));if(!lista.length){cnt.innerHTML='<div style="padding:40px;text-align:center;color:var(--t3)">Nenhum produto encontrado</div>';return;}cnt.innerHTML=lista.map(p=>{const sv=labelVal(p);const baixo=(p.quantidade||0)<=(p.estoque_minimo||0)&&(p.estoque_minimo||0)>0;const valB=p.data_validade?`<span style="font-size:10px;padding:2px 6px;border-radius:5px;background:${sv.cls==='venc'?'var(--rd2)':sv.cls==='warn'?'var(--am2)':'var(--gn2)'};color:${sv.cls==='venc'?'var(--rd)':sv.cls==='warn'?'var(--am)':'var(--gn)'};">${sv.ico} ${sv.txt}</span>`:'';const estB=baixo?'<span style="font-size:10px;padding:2px 6px;border-radius:5px;background:var(--rd2);color:var(--rd);">⚠️ Baixo</span>':'';return`<div style="background:var(--s1);border:1px solid ${baixo?'var(--rd3)':sv.cls==='venc'?'var(--rd3)':'var(--b)'};border-radius:15px;padding:13px;margin-bottom:9px;cursor:pointer;" onclick="abrirProd('${p.id}')"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;"><div><div style="font-size:14px;font-weight:700;">${p.emoji||'📦'} ${p.nome}</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">${p.categoria||'Sem categoria'}</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:5px;">${estB}${valB}</div></div><div style="text-align:right;flex-shrink:0;"><div style="font-size:24px;font-weight:800;color:${baixo?'var(--rd)':'var(--gn)'};">${fmtN(p.quantidade||0)}</div><div style="font-size:10px;color:var(--t2);">${p.unidade||'un'}</div><div style="font-size:10px;color:var(--t3);margin-top:2px;">${fmt(p.preco_custo||0)}</div></div></div><div style="height:5px;background:var(--s3);border-radius:20px;overflow:hidden;"><div style="height:100%;border-radius:20px;background:${baixo?'var(--rd)':'var(--gn)'};width:${Math.min(100,(p.estoque_minimo>0?(p.quantidade||0)/p.estoque_minimo*100:100))}%;transition:width .5s;"></div></div></div>`;}).join('');renderCatPills();}
+function renderCatPills(){const el=$('catPills');if(!el)return;const cats=[...new Set(todosProds.map(p=>p.categoria).filter(Boolean))];el.innerHTML=['<button class="cat on" onclick="filtroCat(\'\',this)">Todos</button>',...cats.map(c=>`<button class="cat" onclick="filtroCat('${c}',this)">${c}</button>`)].join('');}
+function filtroCat(cat,btn){document.querySelectorAll('#catPills .cat').forEach(b=>b.classList.remove('on'));btn&&btn.classList.add('on');const cnt=$('prodList');if(!cnt)return;const lista=cat?todosProds.filter(p=>p.categoria===cat):todosProds;if(!lista.length){cnt.innerHTML='<div style="padding:40px;text-align:center;color:var(--t3)">Nenhum produto nesta categoria</div>';return;}renderProds();}
 
-function renderProds() {
-  const busca=($('sprod')&&$('sprod').value||'').toLowerCase();
-  const cnt=$('prodList'); if(!cnt) return;
-  let lista=todosProds.filter(p=>!busca||p.nome.toLowerCase().includes(busca)||(p.categoria||'').toLowerCase().includes(busca));
-  if(!lista.length){ cnt.innerHTML='<div style="padding:40px;text-align:center;color:var(--t3)">Nenhum produto encontrado</div>'; return; }
-  cnt.innerHTML=lista.map(p=>{
-    const sv=labelVal(p);
-    const baixo=(p.quantidade||0)<=(p.estoque_minimo||0) && (p.estoque_minimo||0)>0;
-    const valBadge=p.data_validade?`<span style="font-size:10px;padding:2px 6px;border-radius:5px;background:${sv.cls==='venc'?'var(--rd2)':sv.cls==='warn'?'var(--am2)':'var(--gn2)'};color:${sv.cls==='venc'?'var(--rd)':sv.cls==='warn'?'var(--am)':'var(--gn)'};">${sv.ico} ${sv.txt}</span>`:'';
-    const estBadge=baixo?'<span style="font-size:10px;padding:2px 6px;border-radius:5px;background:var(--rd2);color:var(--rd);">⚠️ Baixo</span>':'';
-    const fornNome=p.ge_fornecedores?.nome||'';
-    return `<div class="prod-card" onclick="abrirProd('${p.id}')">
-      <div class="prod-ico">${p.emoji||'📦'}</div>
-      <div class="prod-info">
-        <div class="prod-nome">${p.nome}</div>
-        <div class="prod-cat">${p.categoria||'Sem categoria'}${fornNome?' · '+fornNome:''}</div>
-        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">${estBadge}${valBadge}</div>
-      </div>
-      <div class="prod-qtd-wrap">
-        <div class="prod-qtd${baixo?' baixo':''}">${fmtN(p.quantidade||0)}</div>
-        <div class="prod-unit">${p.unidade||'un'}</div>
-        <div style="font-size:10px;color:var(--t3);margin-top:2px;">${fmt(p.preco_custo||0)}</div>
-      </div>
-    </div>`;
-  }).join('');
-  renderCatPills();
-}
+function abrirProd(id){prodAtual=id?(todosProds.find(p=>p.id===id)||null):null;const p=prodAtual;$('mpTit').textContent=p?'Editar Produto':'Novo Produto';$('mpId').value=p?p.id:'';$('mpNome').value=p?p.nome:'';const catSel=$('mpCat');if(catSel)catSel.innerHTML='<option value="">Sem categoria</option>'+todasCats.map(c=>`<option value="${c.nome}" ${p&&p.categoria===c.nome?'selected':''}>${c.emoji||''} ${c.nome}</option>`).join('');const UNITS_PAD=['un','kg','g','l','ml','cx','pc','frd','pç','bd','pt'];const allUnits=[...UNITS_PAD,...todasUnits.map(u=>u.nome||u)];const unitSel=$('mpUnit');if(unitSel)unitSel.innerHTML=allUnits.map(u=>`<option value="${u}" ${p&&p.unidade===u?'selected':''}>${u}</option>`).join('');$('mpQty').value=p?(p.quantidade||0):0;$('mpMin').value=p?(p.estoque_minimo||0):0;$('mpCusto').value=p?(p.preco_custo||0):0;$('mpFab').value=p?(p.data_fabricacao||''):'';$('mpVal').value=p?(p.data_validade||''):'';if(!$('mpEmojiBtn')){const nf=$('mpNome');if(nf){const fg=nf.closest('.fg');if(fg){const wrap=document.createElement('div');wrap.style.cssText='display:flex;gap:7px;align-items:center;';fg.insertBefore(wrap,nf);wrap.appendChild(nf);const btn=document.createElement('button');btn.id='mpEmojiBtn';btn.textContent=p?(p.emoji||'📦'):'📦';btn.type='button';btn.style.cssText='width:46px;height:46px;flex-shrink:0;background:var(--s2);border:1.5px solid var(--b);border-radius:11px;font-size:21px;cursor:pointer;';btn.onclick=()=>{emojiTarget='prod';const picker=$('emojiPicker');if(picker){picker.style.display='block';renderEmojiAba(0);}};wrap.appendChild(btn);}}if(!$('mpEmoji')){const h=document.createElement('input');h.type='hidden';h.id='mpEmoji';h.value=p?(p.emoji||'📦'):'📦';document.querySelector('#ovProd .modal').appendChild(h);}}else{$('mpEmojiBtn').textContent=p?(p.emoji||'📦'):'📦';$('mpEmoji')&&($('mpEmoji').value=p?(p.emoji||'📦'):'📦');}$('mpExc').style.display=p?'block':'none';atualizarStatusVal();$('ovProd').classList.add('on');}
+async function salvarProd(){const nome=$('mpNome').value.trim();if(!nome)return toast('Nome obrigatório','err');const dados={restaurante_id:REST_ID,nome,categoria:$('mpCat').value||null,emoji:$('mpEmoji')&&$('mpEmoji').value||$('mpEmojiBtn')&&$('mpEmojiBtn').textContent||'📦',unidade:$('mpUnit').value||'un',quantidade:parseFloat($('mpQty').value)||0,estoque_minimo:parseFloat($('mpMin').value)||0,preco_custo:parseFloat($('mpCusto').value)||0,data_fabricacao:$('mpFab').value||null,data_validade:$('mpVal').value||null,atualizado_por:FUNC_ID,atualizado_em:new Date().toISOString()};try{const id=$('mpId').value;if(id)await sb(`ge_produtos?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(dados)});else await sb('ge_produtos',{method:'POST',body:JSON.stringify(dados)});toast(id?'✅ Produto atualizado!':'✅ Produto criado!');$('ovProd').classList.remove('on');await carregarProds();renderProds();}catch(e){toast('Erro: '+JSON.stringify(e),'err');}}
+async function excluirProd(){if(!confirm('Excluir produto?'))return;try{await sb(`ge_produtos?id=eq.${$('mpId').value}`,{method:'DELETE'});toast('Produto removido');$('ovProd').classList.remove('on');await carregarProds();renderProds();}catch(e){toast('Erro ao excluir','err');}}
 
-function renderCatPills() {
-  const el=$('catPills'); if(!el) return;
-  const cats=[...new Set(todosProds.map(p=>p.categoria).filter(Boolean))];
-  el.innerHTML=['<button class="cat on" onclick="filtroCat(\'\',this)">Todos</button>',
-    ...cats.map(c=>`<button class="cat" onclick="filtroCat('${c}',this)">${c}</button>`)
-  ].join('');
-}
-
-function filtroCat(cat, btn) {
-  document.querySelectorAll('#catPills .cat').forEach(b=>b.classList.remove('on'));
-  btn&&btn.classList.add('on');
-  const cnt=$('prodList'); if(!cnt) return;
-  const lista=cat?todosProds.filter(p=>p.categoria===cat):todosProds;
-  if(!lista.length){ cnt.innerHTML='<div style="padding:40px;text-align:center;color:var(--t3)">Nenhum produto nesta categoria</div>'; return; }
-  cnt.innerHTML=lista.map(p=>{
-    const sv=labelVal(p); const baixo=(p.quantidade||0)<=(p.estoque_minimo||0)&&(p.estoque_minimo||0)>0;
-    return `<div class="prod-card" onclick="abrirProd('${p.id}')">
-      <div class="prod-ico">${p.emoji||'📦'}</div>
-      <div class="prod-info"><div class="prod-nome">${p.nome}</div><div class="prod-cat">${p.categoria||''}</div></div>
-      <div class="prod-qtd-wrap"><div class="prod-qtd${baixo?' baixo':''}">${fmtN(p.quantidade||0)}</div><div class="prod-unit">${p.unidade||'un'}</div></div>
-    </div>`;
-  }).join('');
-}
-
-function abrirProd(id) {
-  prodAtual = id ? (todosProds.find(p=>p.id===id)||null) : null;
-  const p=prodAtual;
-  $('mpTit').textContent=p?'Editar Produto':'Novo Produto';
-  $('mpId').value=p?p.id:'';
-  $('mpNome').value=p?p.nome:'';
-  const catSel=$('mpCat');
-  if(catSel){
-    catSel.innerHTML='<option value="">Sem categoria</option>'+todasCats.map(c=>`<option value="${c.nome}" ${p&&p.categoria===c.nome?'selected':''}>${c.emoji||''} ${c.nome}</option>`).join('');
-  }
-  const unitSel=$('mpUnit');
-  const UNITS_PAD=['un','kg','g','l','ml','cx','pc','fd','pç','bd','pt'];
-  const allUnits=[...UNITS_PAD,...todasUnits.map(u=>u.nome)];
-  if(unitSel) unitSel.innerHTML=allUnits.map(u=>`<option value="${u}" ${p&&p.unidade===u?'selected':''}>${u}</option>`).join('');
-  $('mpQty').value=p?(p.quantidade||0):0;
-  $('mpMin').value=p?(p.estoque_minimo||0):0;
-  $('mpCusto').value=p?(p.preco_custo||0):0;
-  $('mpFab').value=p?(p.data_fabricacao||''):'';
-  $('mpVal').value=p?(p.data_validade||''):'';
-  // Emoji do produto
-  let eBtn=$('mpEmojiBtn');
-  if(!eBtn){
-    // Criar botão emoji inline se não existir no HTML
-    const nomeField=$('mpNome');
-    if(nomeField){
-      const fg=nomeField.closest('.fg');
-      if(fg&&!$('mpEmojiBtn')){
-        const wrap=document.createElement('div');
-        wrap.style.cssText='display:flex;gap:7px;align-items:flex-end;';
-        const inp=fg.querySelector('input');
-        fg.insertBefore(wrap,inp);
-        wrap.appendChild(inp);
-        const btn=document.createElement('button');
-        btn.id='mpEmojiBtn'; btn.textContent=p?(p.emoji||'📦'):'📦';
-        btn.style.cssText='width:46px;height:46px;flex-shrink:0;background:var(--s2);border:1.5px solid var(--b);border-radius:11px;font-size:21px;cursor:pointer;';
-        btn.onclick=()=>{ emojiTarget='prod'; $('emojiPicker').style.display='block'; renderEmojiAba(0); };
-        wrap.appendChild(btn);
-      }
-    }
-  } else { eBtn.textContent=p?(p.emoji||'📦'):'📦'; }
-  if(!$('mpEmoji')){
-    const h=document.createElement('input'); h.type='hidden'; h.id='mpEmoji'; h.value=p?(p.emoji||'📦'):'📦';
-    $('ovProd')&&$('ovProd').appendChild(h);
-  } else { $('mpEmoji').value=p?(p.emoji||'📦'):'📦'; }
-  $('mpExc').style.display=p?'block':'none';
-  atualizarStatusVal();
-  $('ovProd').classList.add('on');
-}
-
-async function salvarProd() {
-  const nome=$('mpNome').value.trim();
-  if(!nome) return toast('Nome obrigatório','err');
-  const dados={
-    restaurante_id:REST_ID,nome,
-    categoria:$('mpCat').value||null,
-    emoji:$('mpEmoji')&&$('mpEmoji').value||$('mpEmojiBtn')&&$('mpEmojiBtn').textContent||'📦',
-    unidade:$('mpUnit').value||'un',
-    quantidade:parseFloat($('mpQty').value)||0,
-    estoque_minimo:parseFloat($('mpMin').value)||0,
-    preco_custo:parseFloat($('mpCusto').value)||0,
-    data_fabricacao:$('mpFab').value||null,
-    data_validade:$('mpVal').value||null,
-    atualizado_por:FUNC_ID,atualizado_em:new Date().toISOString()
-  };
-  try {
-    const id=$('mpId').value;
-    if(id) await sb(`ge_produtos?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(dados)});
-    else await sb('ge_produtos',{method:'POST',body:JSON.stringify(dados)});
-    toast(id?'✅ Produto atualizado!':'✅ Produto criado!');
-    $('ovProd').classList.remove('on');
-    await carregarProds(); renderProds();
-  } catch(e){ toast('Erro: '+JSON.stringify(e),'err'); }
-}
-
-async function excluirProd() {
-  if(!confirm('Excluir produto?')) return;
-  try {
-    await sb(`ge_produtos?id=eq.${$('mpId').value}`,{method:'DELETE'});
-    toast('Produto removido'); $('ovProd').classList.remove('on');
-    await carregarProds(); renderProds();
-  } catch(e){ toast('Erro ao excluir','err'); }
-}
-
-// ============================================================
 // MOVIMENTOS
-// ============================================================
-function abrirMov(tipo) {
-  movQty=1; subtipoSaida='normal';
-  $('mmTit').textContent=tipo==='entrada'?'📥 Registrar Entrada':'📤 Registrar Saída';
-  $('mmSub').textContent=tipo==='entrada'?'Compra, recebimento ou ajuste positivo':'Consumo, venda, perda ou vencimento';
-  $('mmTipo').value=tipo;
-  $('mmStWrap').style.display=tipo==='saida'?'block':'none';
-  $('mmEstBox').style.display='none';
-  $('qpV').textContent='1';
-  $('mmObs').value='';
-  const sel=$('mmProd');
-  sel.innerHTML='<option value="">Selecione um produto...</option>'+todosProds.map(p=>`<option value="${p.id}">${p.emoji||'📦'} ${p.nome} (${fmtN(p.quantidade||0)} ${p.unidade||'un'})</option>`).join('');
-  // Highlight subtipo
-  ['N','P','V','A'].forEach(l=>{const b=$('tb'+l);if(b)b.classList.remove('on');});
-  $('tbN')&&$('tbN').classList.add('on');
-  $('ovMov').classList.add('on');
-}
+function abrirMov(tipo){movQty=1;subtipoSaida='normal';$('mmTit').textContent=tipo==='entrada'?'📥 Registrar Entrada':'📤 Registrar Saída';$('mmSub').textContent=tipo==='entrada'?'Compra, recebimento ou ajuste':'Consumo, venda, perda ou vencimento';$('mmTipo').value=tipo;$('mmStWrap').style.display=tipo==='saida'?'block':'none';$('mmEstBox').style.display='none';$('qpV').textContent='1';$('mmObs').value='';const sel=$('mmProd');sel.innerHTML='<option value="">Selecione um produto...</option>'+todosProds.map(p=>`<option value="${p.id}">${p.emoji||'📦'} ${p.nome} (${fmtN(p.quantidade||0)} ${p.unidade||'un'})</option>`).join('');['N','P','V','A'].forEach(l=>{const b=$('tb'+l);if(b)b.classList.remove('on');});$('tbN')&&$('tbN').classList.add('on');$('ovMov').classList.add('on');}
+function setSt(sub){subtipoSaida=sub;['N','P','V','A'].forEach(l=>{const b=$('tb'+l);if(b)b.classList.remove('on');});const map={normal:'N',perda:'P',vencimento:'V',ajuste:'A'};const btn=$('tb'+map[sub]);if(btn)btn.classList.add('on');}
+function updEst(){const id=$('mmProd').value;const p=todosProds.find(x=>x.id===id);$('mmEstBox').style.display=p?'block':'none';if(p){$('mmEstV').textContent=fmtN(p.quantidade||0)+' '+(p.unidade||'un');$('mmEstV').style.color=(p.quantidade||0)<=(p.estoque_minimo||0)?'var(--rd)':'var(--gn)';}}
+function ajQ(d){movQty=Math.max(0.01,parseFloat((movQty+d).toFixed(3)));$('qpV').textContent=fmtN(movQty);const id=$('mmProd').value;const p=todosProds.find(x=>x.id===id);if(p){const tipo=$('mmTipo').value;const prev=tipo==='entrada'?(p.quantidade||0)+movQty:Math.max(0,(p.quantidade||0)-movQty);$('mmPrevEl').textContent=`→ Ficará: ${fmtN(prev)} ${p.unidade||'un'}`;}}
+async function registrarMov(){const pid=$('mmProd').value;const tipo=$('mmTipo').value;if(!pid)return toast('Selecione um produto','err');const p=todosProds.find(x=>x.id===pid);if(!p)return;const qtdAntes=p.quantidade||0;const novaQtd=tipo==='entrada'?qtdAntes+movQty:Math.max(0,qtdAntes-movQty);try{await sb(`ge_produtos?id=eq.${pid}`,{method:'PATCH',body:JSON.stringify({quantidade:novaQtd,atualizado_por:FUNC_ID,atualizado_em:new Date().toISOString()})});await sb('ge_movimentacoes',{method:'POST',body:JSON.stringify({restaurante_id:REST_ID,produto_id:pid,tipo,subtipo:tipo==='saida'?subtipoSaida:null,quantidade:movQty,quantidade_anterior:qtdAntes,quantidade_nova:novaQtd,funcionario_id:FUNC_ID,funcionario_nome:FUNC_NOME,observacao:$('mmObs').value||null})});toast(`✅ ${tipo==='entrada'?'Entrada':'Saída'} registrada!`);$('ovMov').classList.remove('on');p.quantidade=novaQtd;renderDash();}catch(e){toast('Erro: '+e.message,'err');}}
 
-function setSt(sub) {
-  subtipoSaida=sub;
-  ['N','P','V','A'].forEach(l=>{const b=$('tb'+l);if(b)b.classList.remove('on');});
-  const map={normal:'N',perda:'P',vencimento:'V',ajuste:'A'};
-  const btn=$('tb'+map[sub]); if(btn) btn.classList.add('on');
-}
-
-function updEst() {
-  const id=$('mmProd').value;
-  const p=todosProds.find(x=>x.id===id);
-  $('mmEstBox').style.display=p?'block':'none';
-  if(p) $('mmEstV').textContent=fmtN(p.quantidade||0)+' '+(p.unidade||'un');
-}
-
-function ajQ(d) {
-  movQty=Math.max(0.01,movQty+d);
-  $('qpV').textContent=fmtN(movQty);
-  const id=$('mmProd').value;
-  const p=todosProds.find(x=>x.id===id);
-  if(p){
-    const tipo=$('mmTipo').value;
-    const prev=tipo==='entrada'?(p.quantidade||0)+movQty:Math.max(0,(p.quantidade||0)-movQty);
-    $('mmPrevEl').textContent=`→ Ficará: ${fmtN(prev)} ${p.unidade||'un'}`;
-  }
-}
-
-async function registrarMov() {
-  const pid=$('mmProd').value;
-  const tipo=$('mmTipo').value;
-  if(!pid) return toast('Selecione um produto','err');
-  const p=todosProds.find(x=>x.id===pid);
-  if(!p) return;
-  const qtdAntes=p.quantidade||0;
-  const novaQtd=tipo==='entrada'?qtdAntes+movQty:Math.max(0,qtdAntes-movQty);
-  try {
-    await sb(`ge_produtos?id=eq.${pid}`,{method:'PATCH',body:JSON.stringify({quantidade:novaQtd,atualizado_por:FUNC_ID,atualizado_em:new Date().toISOString()})});
-    await sb('ge_movimentacoes',{method:'POST',body:JSON.stringify({
-      restaurante_id:REST_ID,produto_id:pid,tipo,subtipo:tipo==='saida'?subtipoSaida:null,
-      quantidade:movQty,quantidade_anterior:qtdAntes,quantidade_nova:novaQtd,
-      funcionario_id:FUNC_ID,funcionario_nome:FUNC_NOME,observacao:$('mmObs').value||null
-    })});
-    toast(`✅ ${tipo==='entrada'?'Entrada':'Saída'} registrada!`);
-    $('ovMov').classList.remove('on');
-    await carregarProds(); renderDash();
-  } catch(e){ toast('Erro: '+e.message,'err'); }
-}
-
-
-// ============================================================
 // DASHBOARD
-// ============================================================
-function renderDash() {
-  const h=new Date().getHours();
-  const saud=h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
-  $('dGreet')&&($('dGreet').textContent=saud+' '+FUNC_NOME.split(' ')[0]+' 👋');
-  $('dDate')&&($('dDate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}));
-  $('stTot')&&($('stTot').textContent=todosProds.length);
-  const baixos=todosProds.filter(p=>(p.quantidade||0)<=(p.estoque_minimo||0)&&(p.estoque_minimo||0)>0);
-  const criticos=todosProds.filter(p=>(p.quantidade||0)===0&&(p.estoque_minimo||0)>0);
-  $('stBx')&&($('stBx').textContent=baixos.length);
-  $('stCr')&&($('stCr').textContent=criticos.length);
-  $('alertCnt')&&($('alertCnt').textContent=baixos.length);
-  const badge=$('alertBadge'); if(badge) badge.style.display=baixos.length?'flex':'none';
-  // Valor do estoque (só proprietário)
-  if(FUNC_ROLE==='proprietario'){
-    const total=todosProds.reduce((a,p)=>(a+(p.preco_custo||0)*(p.quantidade||0)),0);
-    $('veBox')&&($('veBox').style.display='flex'); $('veVal')&&($('veVal').textContent=fmt(total));
-  }
-  // Alertas
-  const alertEl=$('dAlerts'), secA=$('secA');
-  if(alertEl){
-    if(baixos.length){ secA&&(secA.style.display='block');
-      alertEl.innerHTML=baixos.slice(0,5).map(p=>`<div class="alerta-item" onclick="abrirProd('${p.id}')"><span class="ai-ico">${p.emoji||'📦'}</span><div class="ai-info"><div class="ai-nome">${p.nome}</div><div class="ai-det">Estoque: ${fmtN(p.quantidade||0)} ${p.unidade||'un'} · Mín: ${fmtN(p.estoque_minimo||0)}</div></div><div class="ai-act">▸</div></div>`).join('');
-    } else { secA&&(secA.style.display='none'); alertEl.innerHTML=''; }
-  }
-  // Vencendo
-  const vencendo=todosProds.filter(p=>{const d=diasParaVencer(p.data_validade);return d!==null&&d>=0&&d<=30;});
-  const validEl=$('dValid'), secV=$('secV');
-  if(validEl){
-    if(vencendo.length){ secV&&(secV.style.display='block');
-      validEl.innerHTML=vencendo.slice(0,5).map(p=>{const sv=labelVal(p);return `<div class="alerta-item" onclick="abrirProd('${p.id}')"><span class="ai-ico">${p.emoji||'📦'}</span><div class="ai-info"><div class="ai-nome">${p.nome}</div><div class="ai-det" style="color:${sv.cls==='venc'?'var(--rd)':'var(--am)'}">${sv.ico} ${sv.txt} · Val: ${new Date(p.data_validade+'T12:00:00').toLocaleDateString('pt-BR')}</div></div></div>`;}).join('');
-    } else { secV&&(secV.style.display='none'); validEl.innerHTML=''; }
-  }
-  // Movimentos recentes
-  renderMovsRecentes();
-}
+function renderDash(){const h=new Date().getHours();const saud=h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';$('dGreet')&&($('dGreet').textContent=saud+' '+(FUNC_NOME||'').split(' ')[0]+' 👋');$('dDate')&&($('dDate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}));$('stTot')&&($('stTot').textContent=todosProds.length);const baixos=todosProds.filter(p=>(p.quantidade||0)<=(p.estoque_minimo||0)&&(p.estoque_minimo||0)>0);const criticos=todosProds.filter(p=>(p.quantidade||0)===0&&(p.estoque_minimo||0)>0);$('stBx')&&($('stBx').textContent=baixos.length);$('stCr')&&($('stCr').textContent=criticos.length);const badge=$('alertBadge');if(badge){$('alertCnt').textContent=baixos.length;badge.style.display=baixos.length?'flex':'none';}if(FUNC_ROLE==='proprietario'){const total=todosProds.reduce((a,p)=>a+(p.preco_custo||0)*(p.quantidade||0),0);const vb=$('veBox');if(vb)vb.style.display='flex';$('veVal')&&($('veVal').textContent=fmt(total));}const secA=$('secA'),dAlerts=$('dAlerts');if(dAlerts){if(baixos.length){secA&&(secA.style.display='block');dAlerts.innerHTML=baixos.slice(0,5).map(p=>`<div class="alert-c ${(p.quantidade||0)===0?'a-rd':'a-am'}"><div class="a-ico">${p.emoji||'📦'}</div><div class="a-info"><div class="a-nome">${p.nome}</div><div class="a-qty">${fmtN(p.quantidade||0)} ${p.unidade||'un'} · Mín: ${fmtN(p.estoque_minimo||0)}</div></div><button class="a-btn" onclick="abrirMov('entrada')">+ Repor</button></div>`).join('');}else{secA&&(secA.style.display='none');dAlerts.innerHTML='';}}const vencendo=todosProds.filter(p=>{const d=diasParaVencer(p.data_validade);return d!==null&&d>=0&&d<=30;});const secV=$('secV'),dValid=$('dValid');if(dValid){if(vencendo.length){secV&&(secV.style.display='block');dValid.innerHTML=vencendo.map(p=>{const sv=labelVal(p);return`<div class="alert-c a-cy"><div class="a-ico">${p.emoji||'📦'}</div><div class="a-info"><div class="a-nome">${p.nome}</div><div class="a-qty" style="color:${sv.cls==='venc'?'var(--rd)':'var(--am)'}">${sv.ico} ${sv.txt}</div></div></div>`;}).join('');}else{secV&&(secV.style.display='none');dValid.innerHTML='';}}renderMovsRecentes();}
+async function renderMovsRecentes(){const el=$('dMovs');if(!el)return;try{const movs=await sb(`ge_movimentacoes?restaurante_id=eq.${REST_ID}&select=*&order=created_at.desc&limit=8`);if(!movs.length){el.innerHTML='<div style="padding:20px;text-align:center;color:var(--t3);font-size:12px;">Nenhum movimento ainda</div>';return;}el.innerHTML=movs.map(m=>{const dt=new Date(m.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});const cor=m.tipo==='entrada'?'var(--gn)':'var(--rd)';const prod=todosProds.find(p=>p.id===m.produto_id);return`<div class="mov-c"><div class="mov-dot" style="background:${cor}"></div><div class="mov-inf"><div class="mov-n">${prod?prod.nome:m.produto_id||'Produto'}</div><div class="mov-d">${m.funcionario_nome||''} ${m.observacao?'· '+m.observacao:''}</div></div><div class="mov-r"><div class="mov-q" style="color:${cor}">${m.tipo==='entrada'?'+':'-'}${fmtN(m.quantidade)}</div><div class="mov-t">${dt}</div></div></div>`;}).join('');}catch(e){el.innerHTML='<div style="padding:20px;text-align:center;color:var(--t3);font-size:12px;">Erro ao carregar</div>';}}
 
-async function renderMovsRecentes() {
-  const el=$('dMovs'); if(!el) return;
-  try {
-    const movs=await sb(`ge_movimentacoes?restaurante_id=eq.${REST_ID}&select=*,ge_produtos(nome,emoji)&order=created_at.desc&limit=10`);
-    if(!movs.length){ el.innerHTML='<div style="padding:20px;text-align:center;color:var(--t3);font-size:12px;">Nenhum movimento ainda</div>'; return; }
-    el.innerHTML=movs.map(m=>{
-      const dt=new Date(m.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-      const ico=m.tipo==='entrada'?'📥':'📤';
-      const cor=m.tipo==='entrada'?'var(--gn)':'var(--rd)';
-      return `<div class="mov-item"><div class="mov-ico">${m.ge_produtos?.emoji||'📦'}</div><div class="mov-info"><div class="mov-nome">${m.ge_produtos?.nome||'Produto'}</div><div class="mov-det">${ico} ${fmtN(m.quantidade)} ${m.observacao?'· '+m.observacao:''}</div></div><div style="text-align:right"><div style="font-size:12px;font-weight:700;color:${cor}">${m.tipo==='entrada'?'+':'-'}${fmtN(m.quantidade)}</div><div style="font-size:10px;color:var(--t3)">${dt}</div></div></div>`;
-    }).join('');
-  } catch(e){ el.innerHTML='<div style="padding:20px;text-align:center;color:var(--t3);font-size:12px;">Erro ao carregar movimentos</div>'; }
-}
-
-// ============================================================
 // HISTÓRICO
-// ============================================================
-async function renderHist() {
-  const busca=($('shist')&&$('shist').value||'').toLowerCase();
-  const el=$('histList'); if(!el) return;
-  el.innerHTML='<div style="padding:20px;text-align:center;color:var(--t3)">Carregando...</div>';
-  try {
-    let url=`ge_movimentacoes?restaurante_id=eq.${REST_ID}&select=*,ge_produtos(nome,emoji)&order=created_at.desc&limit=50`;
-    if(histFiltro) url+=`&tipo=eq.${histFiltro}`;
-    let movs=await sb(url);
-    if(busca) movs=movs.filter(m=>(m.ge_produtos?.nome||'').toLowerCase().includes(busca)||(m.funcionario_nome||'').toLowerCase().includes(busca));
-    if(!movs.length){ el.innerHTML='<div style="padding:40px;text-align:center;color:var(--t3)">Nenhum movimento encontrado</div>'; return; }
-    el.innerHTML=movs.map(m=>{
-      const dt=new Date(m.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
-      const ico=m.tipo==='entrada'?'📥':m.subtipo==='perda'?'⚠️':m.subtipo==='vencimento'?'📅':'📤';
-      const cor=m.tipo==='entrada'?'var(--gn)':'var(--rd)';
-      return `<div class="mov-item"><div class="mov-ico">${m.ge_produtos?.emoji||'📦'}</div><div class="mov-info"><div class="mov-nome">${m.ge_produtos?.nome||'Produto'}</div><div class="mov-det">${ico} ${m.tipo} ${m.subtipo?'· '+m.subtipo:''} ${m.funcionario_nome?'· '+m.funcionario_nome:''}</div><div style="font-size:10px;color:var(--t3)">${dt} ${m.observacao?'· '+m.observacao:''}</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:13px;font-weight:700;color:${cor}">${m.tipo==='entrada'?'+':'-'}${fmtN(m.quantidade)}</div></div></div>`;
-    }).join('');
-  } catch(e){ el.innerHTML='<div style="padding:20px;text-align:center;color:var(--t3)">Erro ao carregar</div>'; }
-}
+async function renderHist(){const busca=($('shist')&&$('shist').value||'').toLowerCase();const el=$('histList');if(!el)return;el.innerHTML='<div style="padding:20px;text-align:center;color:var(--t3)">Carregando...</div>';try{let url=`ge_movimentacoes?restaurante_id=eq.${REST_ID}&select=*&order=created_at.desc&limit=100`;if(histFiltro)url+=`&tipo=eq.${histFiltro}`;let movs=await sb(url);if(busca)movs=movs.filter(m=>{const prod=todosProds.find(p=>p.id===m.produto_id);return(prod&&prod.nome.toLowerCase().includes(busca))||(m.funcionario_nome||'').toLowerCase().includes(busca)||(m.observacao||'').toLowerCase().includes(busca);});if(!movs.length){el.innerHTML='<div style="padding:40px;text-align:center;color:var(--t3)">Nenhum movimento encontrado</div>';return;}el.innerHTML=movs.map(m=>{const dt=new Date(m.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});const prod=todosProds.find(p=>p.id===m.produto_id);const ico=m.tipo==='entrada'?'📥':m.subtipo==='perda'?'⚠️':m.subtipo==='vencimento'?'📅':'📤';const cor=m.tipo==='entrada'?'var(--gn)':'var(--rd)';return`<div class="h-c"><div class="h-ico ${m.tipo==='entrada'?'entrada':m.subtipo==='perda'?'perda':'saida'}">${ico}</div><div class="h-inf"><div class="h-n">${prod?prod.nome:'Produto'}</div><div class="h-d">${m.funcionario_nome||''} ${m.subtipo?'· '+m.subtipo:''} ${m.observacao?'· '+m.observacao:''}</div><div class="h-d">${dt}</div></div><div class="h-r"><div class="h-q ${m.tipo==='entrada'?'entrada':m.subtipo==='perda'?'perda':'saida'}">${m.tipo==='entrada'?'+':'-'}${fmtN(m.quantidade)}</div></div></div>`;}).join('');}catch(e){el.innerHTML='<div style="padding:20px;text-align:center;color:var(--t3)">Erro ao carregar</div>';}}
+function setHF(f,btn){histFiltro=f;document.querySelectorAll('#pg-hist .cat').forEach(b=>b.classList.remove('on'));btn&&btn.classList.add('on');renderHist();}
 
-function setHF(f, btn) {
-  histFiltro=f;
-  document.querySelectorAll('#pg-hist .cat').forEach(b=>b.classList.remove('on'));
-  btn&&btn.classList.add('on');
-  renderHist();
-}
-
-// ============================================================
 // INSIGHTS
-// ============================================================
-async function renderInsights() {
-  renderInsMes(); renderInsLista();
-}
+async function renderInsights(){const el=$('insMes');if(el){try{const ini=new Date();ini.setDate(1);ini.setHours(0,0,0,0);const movs=await sb(`ge_movimentacoes?restaurante_id=eq.${REST_ID}&created_at=gte.${ini.toISOString()}&select=tipo,subtipo,quantidade&limit=500`);const entradas=movs.filter(m=>m.tipo==='entrada').reduce((a,m)=>a+m.quantidade,0);const saidas=movs.filter(m=>m.tipo==='saida').reduce((a,m)=>a+m.quantidade,0);const nPerdas=movs.filter(m=>m.subtipo==='perda'||m.subtipo==='vencimento').length;el.innerHTML=`<div class="stats"><div class="stat"><div class="stat-n" style="color:var(--gn)">${fmtN(entradas)}</div><div class="stat-l">Entradas</div></div><div class="stat"><div class="stat-n" style="color:var(--bl)">${fmtN(saidas)}</div><div class="stat-l">Saídas</div></div><div class="stat"><div class="stat-n" style="color:var(--rd)">${nPerdas}</div><div class="stat-l">Perdas</div></div></div>`;}catch(e){el.innerHTML='';}}const elL=$('insList');if(elL){const baixos=todosProds.filter(p=>(p.quantidade||0)<=(p.estoque_minimo||0)&&(p.estoque_minimo||0)>0);if(!baixos.length)elL.innerHTML='<div style="color:var(--gn);font-size:12px;padding:12px">✅ Nenhum produto em falta!</div>';else elL.innerHTML=baixos.map(p=>`<div class="h-c"><div class="h-ico saida">${p.emoji||'📦'}</div><div class="h-inf"><div class="h-n">${p.nome}</div><div class="h-d">Atual: ${fmtN(p.quantidade||0)} · Mín: ${fmtN(p.estoque_minimo||0)} ${p.unidade||'un'}</div></div></div>`).join('');}}
 
-async function renderInsMes() {
-  const el=$('insMes'); if(!el) return;
-  try {
-    const ini=new Date(); ini.setDate(1); ini.setHours(0,0,0,0);
-    const movs=await sb(`ge_movimentacoes?restaurante_id=eq.${REST_ID}&created_at=gte.${ini.toISOString()}&select=tipo,quantidade,ge_produtos(preco_custo)`);
-    const entradas=movs.filter(m=>m.tipo==='entrada').reduce((a,m)=>a+m.quantidade,0);
-    const saidas=movs.filter(m=>m.tipo==='saida').reduce((a,m)=>a+m.quantidade,0);
-    const perdas=movs.filter(m=>m.subtipo==='perda').reduce((a,m)=>a+(m.quantidade*(m.ge_produtos?.preco_custo||0)),0);
-    el.innerHTML=`<div class="stats" style="margin-bottom:0"><div class="stat"><div class="stat-n" style="color:var(--gn)">${fmtN(entradas)}</div><div class="stat-l">Entradas</div></div><div class="stat"><div class="stat-n" style="color:var(--bl)">${fmtN(saidas)}</div><div class="stat-l">Saídas</div></div><div class="stat"><div class="stat-n" style="color:var(--rd)">${fmt(perdas)}</div><div class="stat-l">Perdas R$</div></div></div>`;
-  } catch(e){ el.innerHTML='<div style="color:var(--t3);font-size:12px;padding:12px">Erro ao carregar</div>'; }
-}
-
-async function renderInsLista() {
-  const el=$('insList'); if(!el) return;
-  const baixos=todosProds.filter(p=>(p.quantidade||0)<=(p.estoque_minimo||0)&&(p.estoque_minimo||0)>0);
-  if(!baixos.length){ el.innerHTML='<div style="color:var(--gn);font-size:12px;padding:12px">✅ Nenhum produto em falta!</div>'; return; }
-  el.innerHTML=baixos.map(p=>`<div class="mov-item"><div class="mov-ico">${p.emoji||'📦'}</div><div class="mov-info"><div class="mov-nome">${p.nome}</div><div class="mov-det">Atual: ${fmtN(p.quantidade||0)} · Mín: ${fmtN(p.estoque_minimo||0)} ${p.unidade||'un'}</div></div></div>`).join('');
-}
-
-// ============================================================
 // FUNCIONÁRIOS
-// ============================================================
-async function carregarFuncs() {
-  try { todosFuncs=await sb(`ge_funcionarios?restaurante_id=eq.${REST_ID}&select=*&order=nome.asc`); }
-  catch(e){ todosFuncs=[]; }
-}
+async function carregarFuncs(){try{todosFuncs=await sb(`ge_funcionarios?restaurante_id=eq.${REST_ID}&select=*&order=nome.asc`);}catch(e){todosFuncs=[];}}
+function renderFuncs(){const el=$('listaFuncs');if(!el)return;if(!todosFuncs.length){el.innerHTML='<div style="padding:14px;text-align:center;color:var(--t3);font-size:12px;">Nenhum funcionário cadastrado</div>';return;}el.innerHTML=todosFuncs.map(f=>`<div class="f-c" onclick="abrirFunc('${f.id}')"><div style="font-size:22px;width:36px;height:36px;border-radius:50%;background:var(--gn2);display:flex;align-items:center;justify-content:center;">${f.nome[0]||'?'}</div><div class="f-inf"><div class="f-n">${f.nome}</div><div class="f-s">PIN: ••••</div></div><div style="color:var(--t3);">›</div></div>`).join('');}
+function abrirNovoFunc(){funcAtual=null;$('mfTit').textContent='Novo Funcionário';$('mfId').value='';$('mfNome').value='';$('mfPin').value='';$('mfExc').style.display='none';$('ovFunc').classList.add('on');}
+function abrirFunc(id){funcAtual=todosFuncs.find(f=>f.id===id)||null;const f=funcAtual;$('mfTit').textContent='Editar Funcionário';$('mfId').value=f?f.id:'';$('mfNome').value=f?f.nome:'';$('mfPin').value='';$('mfExc').style.display='block';$('ovFunc').classList.add('on');}
+async function salvarFunc(){const nome=$('mfNome').value.trim();const pin=$('mfPin').value;if(!nome)return toast('Nome obrigatório','err');if(!funcAtual&&(!pin||pin.length!==4||isNaN(pin)))return toast('PIN deve ter 4 números','err');const dados={restaurante_id:REST_ID,nome,...(pin?{pin}:{})};try{const id=$('mfId').value;if(id)await sb(`ge_funcionarios?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(dados)});else await sb('ge_funcionarios',{method:'POST',body:JSON.stringify(dados)});toast(id?'✅ Funcionário atualizado!':'✅ Funcionário criado!');$('ovFunc').classList.remove('on');await carregarFuncs();renderFuncs();}catch(e){toast('Erro: '+JSON.stringify(e),'err');}}
+async function excluirFunc(){if(!confirm('Remover funcionário?'))return;try{await sb(`ge_funcionarios?id=eq.${$('mfId').value}`,{method:'DELETE'});toast('Funcionário removido');$('ovFunc').classList.remove('on');await carregarFuncs();renderFuncs();}catch(e){toast('Erro ao remover','err');}}
 
-function renderFuncs() {
-  const el=$('listaFuncs'); if(!el) return;
-  if(!todosFuncs.length){ el.innerHTML='<div style="padding:20px;text-align:center;color:var(--t3);font-size:12px;">Nenhum funcionário cadastrado</div>'; return; }
-  el.innerHTML=todosFuncs.map(f=>`<div class="func-card" onclick="abrirFunc('${f.id}')"><div class="func-ico">${f.nome[0]||'?'}</div><div class="func-info"><div class="func-nome">${f.nome}</div><div class="func-pin">PIN: ••••</div></div></div>`).join('');
-}
+// LINK DE ACESSO (AJUSTE 3)
+function compartilharLink(){const link=$('linkFuncEl').textContent;const cod=$('codVal').textContent;if(!link||link==='—')return toast('Carregando...','warn');const msg=encodeURIComponent(`👋 Acesso ao sistema de estoque!\n\n🔗 ${link}\n\n📱 Abra o link, adicione à tela inicial e entre com o PIN que te passei.\n\nCódigo alternativo: ${cod}`);window.open('https://wa.me/?text='+msg,'_blank');}
+async function regenerarCod(){if(!confirm('Gerar novo link? O link anterior para de funcionar.'))return;const cod=Math.random().toString(36).substring(2,8).toUpperCase();try{await sb(`ge_restaurantes?id=eq.${REST_ID}`,{method:'PATCH',body:JSON.stringify({codigo_acesso:cod})});toast('✅ Novo link gerado!');carregarConfig();}catch(e){toast('Erro','err');}}
 
-function abrirNovoFunc() { funcAtual=null; abrirEditFunc(null); }
-function abrirFunc(id) { funcAtual=todosFuncs.find(f=>f.id===id)||null; abrirEditFunc(funcAtual); }
-function abrirEditFunc(f) {
-  $('mfTit').textContent=f?'Editar Funcionário':'Novo Funcionário';
-  $('mfId').value=f?f.id:'';
-  $('mfNome').value=f?f.nome:'';
-  $('mfPin').value='';
-  $('mfExc').style.display=f?'block':'none';
-  $('ovFunc').classList.add('on');
-}
+// CATEGORIAS
+async function carregarCats(){try{todasCats=await sb(`ge_categorias?restaurante_id=eq.${REST_ID}&select=*&order=nome.asc`);}catch(e){todasCats=[];}}
+async function carregarUnits(){try{todasUnits=await sb(`ge_unidades?restaurante_id=eq.${REST_ID}&select=*&order=nome.asc`);}catch(e){todasUnits=[];}}
+function renderCats(){const el=$('listaCats');if(!el)return;if(!todasCats.length){el.innerHTML='<div style="color:var(--t3);font-size:12px;padding:8px">Nenhuma categoria criada ainda</div>';return;}el.innerHTML=todasCats.map(c=>`<div style="display:flex;align-items:center;gap:9px;padding:8px;background:var(--s2);border-radius:9px;margin-bottom:6px;"><span style="font-size:20px;">${c.emoji||'🏷️'}</span><span style="flex:1;font-size:13px;font-weight:600;">${c.nome}</span><button onclick="excluirCat('${c.id}')" style="background:var(--rd2);border:none;border-radius:7px;color:var(--rd);padding:4px 8px;font-size:11px;cursor:pointer;">✕</button></div>`).join('');}
+async function addCat(){const nome=$('novaCatNome').value.trim();const ico=$('novaCatIco').value||'🏷️';if(!nome)return toast('Nome da categoria obrigatório','err');try{await sb('ge_categorias',{method:'POST',body:JSON.stringify({restaurante_id:REST_ID,nome,emoji:ico})});toast('✅ Categoria criada!');$('novaCatNome').value='';$('novaCatIco').value='🏷️';$('emjBtn').textContent='🏷️';await carregarCats();renderCats();}catch(e){toast('Erro: '+JSON.stringify(e),'err');}}
+async function excluirCat(id){if(!confirm('Excluir categoria?'))return;try{await sb(`ge_categorias?id=eq.${id}`,{method:'DELETE'});await carregarCats();renderCats();}catch(e){toast('Erro','err');}}
+function renderUnits(){const UNITS_PAD=['un','kg','g','l','ml','cx','pc','frd','pç','bd','pt'];const el=$('listaUnits');if(!el)return;el.innerHTML=[...UNITS_PAD.map(u=>`<span style="display:inline-block;margin:3px 4px;padding:5px 10px;background:var(--s3);border-radius:7px;font-size:12px;color:var(--t2);">${u}</span>`),...todasUnits.map(u=>`<span style="display:inline-flex;align-items:center;gap:5px;margin:3px 4px;padding:5px 10px;background:var(--gn2);border:1px solid var(--gn3);border-radius:7px;font-size:12px;color:var(--gn);">${u.nome||u} <button onclick="excluirUnit('${u.id||u}')" style="background:none;border:none;color:var(--rd);cursor:pointer;font-size:11px;padding:0;">✕</button></span>`)].join('');}
+async function addUnit(){const nome=$('novaUnit').value.trim().toLowerCase();if(!nome)return toast('Nome da unidade obrigatório','err');try{await sb('ge_unidades',{method:'POST',body:JSON.stringify({restaurante_id:REST_ID,nome})});toast('✅ Unidade criada!');$('novaUnit').value='';await carregarUnits();renderUnits();}catch(e){toast('Erro: '+JSON.stringify(e),'err');}}
+async function excluirUnit(id){try{await sb(`ge_unidades?id=eq.${id}`,{method:'DELETE'});await carregarUnits();renderUnits();}catch(e){toast('Erro','err');}}
 
-async function salvarFunc() {
-  const nome=$('mfNome').value.trim();
-  const pin=$('mfPin').value;
-  if(!nome) return toast('Nome obrigatório','err');
-  if(!funcAtual&&(!pin||pin.length!==4||isNaN(pin))) return toast('PIN deve ter 4 números','err');
-  const dados={restaurante_id:REST_ID,nome,...(pin?{pin}:{})};
-  try {
-    const id=$('mfId').value;
-    if(id) await sb(`ge_funcionarios?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(dados)});
-    else await sb('ge_funcionarios',{method:'POST',body:JSON.stringify(dados)});
-    toast(id?'✅ Funcionário atualizado!':'✅ Funcionário criado!');
-    $('ovFunc').classList.remove('on');
-    await carregarFuncs(); renderFuncs();
-  } catch(e){ toast('Erro: '+JSON.stringify(e),'err'); }
-}
+// CONFIGURAÇÕES
+async function carregarConfig(){try{const r=await sb(`ge_restaurantes?id=eq.${REST_ID}&select=*`);const rest=r[0];if(!rest)return;$('cfgNome')&&($('cfgNome').value=rest.nome_restaurante||'');$('cfgTipo')&&($('cfgTipo').value=rest.tipo_negocio||'');const wpp=(rest.whatsapp||'').replace(/^55/,'');const wEl=$('cfgWpp');if(wEl){wEl.value=wpp;maskWpp(wEl);}const cod=rest.codigo_acesso||'------';const link=`${window.location.origin}${window.location.pathname}?cod=${cod}`;$('linkFuncEl')&&($('linkFuncEl').textContent=link);$('codVal')&&($('codVal').textContent=cod);renderFuncs();renderCats();renderUnits();}catch(e){toast('Erro ao carregar config','err');}}
+async function salvarIdent(){const nome=$('cfgNome').value.trim();const tipo=$('cfgTipo').value.trim();if(!nome)return toast('Nome obrigatório','err');const wppRaw=($('cfgWpp').value||'').replace(/\D/g,'');try{await sb(`ge_restaurantes?id=eq.${REST_ID}`,{method:'PATCH',body:JSON.stringify({nome_restaurante:nome,tipo_negocio:tipo,whatsapp:wppRaw?'55'+wppRaw:null})});toast('✅ Dados salvos!');$('topNome').textContent=nome;}catch(e){toast('Erro ao salvar','err');}}
 
-async function excluirFunc() {
-  if(!confirm('Remover funcionário?')) return;
-  try {
-    await sb(`ge_funcionarios?id=eq.${$('mfId').value}`,{method:'DELETE'});
-    toast('Funcionário removido'); $('ovFunc').classList.remove('on');
-    await carregarFuncs(); renderFuncs();
-  } catch(e){ toast('Erro ao remover','err'); }
-}
+// LISTA DE COMPRAS
+async function enviarListaCompras(){const r=await sb(`ge_restaurantes?id=eq.${REST_ID}&select=whatsapp,nome_restaurante`).catch(()=>null);const wpp=(r&&r[0]&&r[0].whatsapp)||'';if(!wpp)return toast('Configure o WhatsApp nas configurações','warn');const baixos=todosProds.filter(p=>(p.quantidade||0)<=(p.estoque_minimo||0)&&(p.estoque_minimo||0)>0);if(!baixos.length)return toast('Nenhum produto com estoque baixo','info');const linhas=baixos.map(p=>`• ${p.emoji||'📦'} ${p.nome}: ${fmtN(p.quantidade||0)} ${p.unidade||'un'} (mín: ${fmtN(p.estoque_minimo||0)})`).join('\n');const msg=encodeURIComponent(`🛒 *Lista de Compras — ${new Date().toLocaleDateString('pt-BR')}*\n\n${linhas}\n\n_Gerencion Estoque v3.1_`);window.open(`https://wa.me/${wpp}?text=${msg}`,'_blank');}
 
-// Link de acesso para funcionários (AJUSTE 3)
-function compartilharLink() {
-  const link=$('linkFuncEl').textContent;
-  const cod=$('codVal').textContent;
-  if(!link||link==='—') return toast('Aguarde...','warn');
-  const msg=encodeURIComponent(`👋 Aqui está seu acesso ao sistema de estoque!\n\n🔗 ${link}\n\n📱 Abra o link, instale o app (Adicionar à tela inicial) e entre com o PIN que te passei.\n\nCódigo alternativo: ${cod}`);
-  window.open('https://wa.me/?text='+msg,'_blank');
-}
-
-async function regenerarCod() {
-  if(!confirm('Gerar novo link? O link anterior para de funcionar.')) return;
-  const cod=Math.random().toString(36).substring(2,8).toUpperCase();
-  try {
-    await sb(`ge_restaurantes?id=eq.${REST_ID}`,{method:'PATCH',body:JSON.stringify({codigo_acesso:cod})});
-    toast('✅ Novo link gerado!'); carregarConfig();
-  } catch(e){ toast('Erro','err'); }
-}
-
-
-// ============================================================
-// CATEGORIAS E UNIDADES
-// ============================================================
-async function carregarCats() {
-  try { todasCats=await sb(`ge_categorias?restaurante_id=eq.${REST_ID}&select=*&order=nome.asc`); }
-  catch(e){ todasCats=[]; }
-}
-async function carregarUnits() {
-  try { todasUnits=await sb(`ge_unidades?restaurante_id=eq.${REST_ID}&select=*&order=nome.asc`); }
-  catch(e){ todasUnits=[]; }
-}
-
-function renderCats() {
-  const el=$('listaCats'); if(!el) return;
-  if(!todasCats.length){ el.innerHTML='<div style="color:var(--t3);font-size:12px;padding:8px">Nenhuma categoria criada</div>'; return; }
-  el.innerHTML=todasCats.map(c=>`<div style="display:flex;align-items:center;gap:9px;padding:8px;background:var(--s2);border-radius:9px;margin-bottom:6px;">
-    <span style="font-size:20px;">${c.emoji||'🏷️'}</span>
-    <span style="flex:1;font-size:13px;font-weight:600;">${c.nome}</span>
-    <button onclick="excluirCat('${c.id}')" style="background:var(--rd2);border:none;border-radius:7px;color:var(--rd);padding:4px 8px;font-size:11px;cursor:pointer;">✕</button>
-  </div>`).join('');
-}
-
-async function addCat() {
-  const nome=$('novaCatNome').value.trim();
-  const ico=$('novaCatIco').value||'🏷️';
-  if(!nome) return toast('Nome da categoria obrigatório','err');
-  try {
-    await sb('ge_categorias',{method:'POST',body:JSON.stringify({restaurante_id:REST_ID,nome,emoji:ico})});
-    toast('✅ Categoria criada!'); $('novaCatNome').value=''; $('novaCatIco').value='🏷️'; $('emjBtn').textContent='🏷️';
-    await carregarCats(); renderCats();
-  } catch(e){ toast('Erro: '+JSON.stringify(e),'err'); }
-}
-
-async function excluirCat(id) {
-  if(!confirm('Excluir categoria?')) return;
-  try {
-    await sb(`ge_categorias?id=eq.${id}`,{method:'DELETE'});
-    toast('Categoria removida'); await carregarCats(); renderCats();
-  } catch(e){ toast('Erro','err'); }
-}
-
-function renderUnits() {
-  const UNITS_PAD=['un','kg','g','l','ml','cx','pc','fd','pç','bd','pt'];
-  const el=$('listaUnits'); if(!el) return;
-  el.innerHTML=[...UNITS_PAD.map(u=>`<span style="display:inline-block;margin:3px 4px;padding:5px 10px;background:var(--s3);border-radius:7px;font-size:12px;color:var(--t2);">${u}</span>`),
-    ...todasUnits.map(u=>`<span style="display:inline-flex;align-items:center;gap:5px;margin:3px 4px;padding:5px 10px;background:var(--gn2);border:1px solid var(--gn3);border-radius:7px;font-size:12px;color:var(--gn);">${u.nome} <button onclick="excluirUnit('${u.id}')" style="background:none;border:none;color:var(--rd);cursor:pointer;font-size:11px;padding:0;">✕</button></span>`)
-  ].join('');
-}
-
-async function addUnit() {
-  const nome=$('novaUnit').value.trim().toLowerCase();
-  if(!nome) return toast('Nome da unidade obrigatório','err');
-  try {
-    await sb('ge_unidades',{method:'POST',body:JSON.stringify({restaurante_id:REST_ID,nome})});
-    toast('✅ Unidade criada!'); $('novaUnit').value='';
-    await carregarUnits(); renderUnits();
-  } catch(e){ toast('Erro: '+JSON.stringify(e),'err'); }
-}
-
-async function excluirUnit(id) {
-  try {
-    await sb(`ge_unidades?id=eq.${id}`,{method:'DELETE'});
-    await carregarUnits(); renderUnits();
-  } catch(e){ toast('Erro','err'); }
-}
-
-// ============================================================
-// CONFIGURAÇÕES / IDENTIDADE
-// ============================================================
-async function carregarConfig() {
-  try {
-    const r=await sb(`ge_restaurantes?id=eq.${REST_ID}&select=*`);
-    const rest=r[0]; if(!rest) return;
-    $('cfgNome')&&($('cfgNome').value=rest.nome_restaurante||'');
-    $('cfgTipo')&&($('cfgTipo').value=rest.tipo_negocio||'');
-    const wpp=(rest.whatsapp||'').replace(/^55/,'');
-    const wEl=$('cfgWpp'); if(wEl){ wEl.value=wpp; maskWpp(wEl); }
-    // Link de acesso
-    const cod=rest.codigo_acesso||'------';
-    const link=`${window.location.origin}${window.location.pathname}?cod=${cod}`;
-    $('linkFuncEl')&&($('linkFuncEl').textContent=link);
-    $('codVal')&&($('codVal').textContent=cod);
-    renderFuncs(); renderCats(); renderUnits();
-  } catch(e){ toast('Erro ao carregar config','err'); }
-}
-
-async function salvarIdent() {
-  const nome=$('cfgNome').value.trim();
-  const tipo=$('cfgTipo').value.trim();
-  if(!nome) return toast('Nome obrigatório','err');
-  const wppRaw=($('cfgWpp').value||'').replace(/\D/g,'');
-  try {
-    await sb(`ge_restaurantes?id=eq.${REST_ID}`,{method:'PATCH',body:JSON.stringify({nome_restaurante:nome,tipo_negocio:tipo,whatsapp:wppRaw?'55'+wppRaw:null})});
-    toast('✅ Dados salvos!'); $('topNome').textContent=nome;
-  } catch(e){ toast('Erro ao salvar','err'); }
-}
-
-// ============================================================
-// ENVIAR LISTA DE COMPRAS
-// ============================================================
-async function enviarListaCompras() {
-  const r=await sb(`ge_restaurantes?id=eq.${REST_ID}&select=whatsapp,nome_restaurante`).catch(()=>null);
-  const wpp=(r&&r[0]&&r[0].whatsapp)||'';
-  if(!wpp) return toast('Configure o WhatsApp nas configurações','warn');
-  const baixos=todosProds.filter(p=>(p.quantidade||0)<=(p.estoque_minimo||0)&&(p.estoque_minimo||0)>0);
-  if(!baixos.length) return toast('Nenhum produto com estoque baixo','info');
-  const linhas=baixos.map(p=>`• ${p.emoji||'📦'} ${p.nome}: ${fmtN(p.quantidade||0)} ${p.unidade||'un'} (mín: ${fmtN(p.estoque_minimo||0)})`).join('\n');
-  const msg=encodeURIComponent(`🛒 *Lista de Compras — ${new Date().toLocaleDateString('pt-BR')}*\n\n${linhas}\n\n_Gerado pelo Gerencion Estoque v3.1_`);
-  window.open(`https://wa.me/${wpp}?text=${msg}`,'_blank');
-}
-
-// ============================================================
-// AJUDA
-// ============================================================
-function abrirAjuda() {
-  $('helpTi').textContent='❓ Como usar o Gerencion Estoque';
-  $('helpCnt').innerHTML=`
-    <div class="help-it"><div class="help-ic">📦</div><div><div class="help-nt">Cadastrar Produtos</div><div class="help-ns">Toque em <strong>+</strong> para adicionar. Defina estoque mínimo para alertas automáticos. Use emojis para identificar visualmente.</div></div></div>
-    <div class="help-it"><div class="help-ic">📥</div><div><div class="help-nt">Registrar Entradas e Saídas</div><div class="help-ns">Use os botões rápidos no Início ou acesse Histórico. Marque saídas como perda ou vencimento para relatórios precisos.</div></div></div>
-    <div class="help-it"><div class="help-ic">⚠️</div><div><div class="help-nt">Alertas de Estoque</div><div class="help-ns">Produtos abaixo do mínimo aparecem em destaque. Configure estoque mínimo em cada produto.</div></div></div>
-    <div class="help-it"><div class="help-ic">👥</div><div><div class="help-nt">Funcionários</div><div class="help-ns">Cada funcionário tem um PIN único. Envie o link de acesso pelo WhatsApp para que instalem o app no celular.</div></div></div>
-    <div class="help-it"><div class="help-ic">📅</div><div><div class="help-nt">Validade com Fabricação</div><div class="help-ns">Informe a data de fabricação junto com a validade para evitar alertas falsos em produtos recém-chegados.</div></div></div>`;
-  $('ovHelp').classList.add('on');
-}
-
-// ============================================================
-// LOGO
-// ============================================================
-function previewLogo() {
-  const file=$('logoFile')&&$('logoFile').files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=e=>{ $('logoImg').src=e.target.result; $('logoImg').style.display='block'; $('logoPh').style.display='none'; };
-  reader.readAsDataURL(file);
-}
-function removerLogo() { $('logoImg').style.display='none'; $('logoPh').style.display='flex'; $('logoFile').value=''; }
-
-// ============================================================
 // RELATÓRIOS
-// ============================================================
-function relEmail() { const e=$('cfgEmail').value; if(!e) return toast('Informe o e-mail','warn'); toast('Função de e-mail em breve','info'); }
-function relPDF() { toast('Função PDF em breve','info'); }
-function relCSV() {
-  if(!todosProds.length) return toast('Sem produtos para exportar','warn');
-  const rows=[['Nome','Categoria','Emoji','Quantidade','Unidade','Mín','Custo','Validade','Fabricação'],...todosProds.map(p=>[p.nome,p.categoria||'',p.emoji||'',p.quantidade||0,p.unidade||'',p.estoque_minimo||0,p.preco_custo||0,p.data_validade||'',p.data_fabricacao||''])];
-  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv); a.download='estoque.csv'; a.click();
-  toast('✅ CSV baixado!');
-}
-async function limparHist() {
-  if(!confirm('Limpar todo o histórico de movimentos? Os produtos serão mantidos.')) return;
-  try {
-    await sb(`ge_movimentacoes?restaurante_id=eq.${REST_ID}`,{method:'DELETE'});
-    toast('✅ Histórico limpo!');
-  } catch(e){ toast('Erro','err'); }
-}
+function relWpp(){const raw=($('cfgWpp').value||'').replace(/\D/g,'');if(!raw)return toast('Configure o WhatsApp','warn');const linhas=todosProds.map(p=>`${p.emoji||'📦'} ${p.nome}: ${fmtN(p.quantidade||0)} ${p.unidade||'un'}`).join('\n');const msg=encodeURIComponent(`📦 *Relatório de Estoque*\n${new Date().toLocaleDateString('pt-BR')}\n\n${linhas}`);window.open(`https://wa.me/55${raw}?text=${msg}`,'_blank');}
+function relEmail(){toast('E-mail em breve','info');}
+function relPDF(){toast('PDF em breve','info');}
+function relCSV(){if(!todosProds.length)return toast('Sem produtos','warn');const rows=[['Nome','Categoria','Emoji','Qtd','Unidade','Mín','Custo','Validade','Fabricação'],...todosProds.map(p=>[p.nome,p.categoria||'',p.emoji||'',p.quantidade||0,p.unidade||'',p.estoque_minimo||0,p.preco_custo||0,p.data_validade||'',p.data_fabricacao||''])];const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='estoque.csv';a.click();toast('✅ CSV baixado!');}
+async function limparHist(){if(!confirm('Limpar todo o histórico?'))return;try{await sb(`ge_movimentacoes?restaurante_id=eq.${REST_ID}`,{method:'DELETE'});toast('✅ Histórico limpo!');}catch(e){toast('Erro','err');}}
 
-// ============================================================
-// DOMContentLoaded — INIT
-// ============================================================
-document.addEventListener('DOMContentLoaded', async () => {
-  // Iniciar todas telas ocultas
-  document.querySelectorAll('[id^="tela"]').forEach(el=>{
-    el.style.display='none';
-  });
+// AJUDA
+function abrirAjuda(){$('helpTi').textContent='❓ Como usar';$('helpCnt').innerHTML=`<div class="help-it"><div class="help-ic">📦</div><div><div class="help-nt">Cadastrar Produtos</div><div class="help-ns">Toque no <strong>+</strong> para adicionar. Use emojis para identificar visualmente. Defina estoque mínimo para alertas.</div></div></div><div class="help-it"><div class="help-ic">📅</div><div><div class="help-nt">Fabricação + Validade</div><div class="help-ns">Informe ambas as datas para evitar alertas falsos. O status aparece em tempo real no modal.</div></div></div><div class="help-it"><div class="help-ic">📥</div><div><div class="help-nt">Entradas e Saídas</div><div class="help-ns">Use os botões rápidos no Início. Classifique saídas como perda ou vencimento para relatórios precisos.</div></div></div><div class="help-it"><div class="help-ic">🔗</div><div><div class="help-nt">Link para Funcionários</div><div class="help-ns">Em Config → envie o link pelo WhatsApp. O funcionário abre, cria o PIN e instala o app automaticamente.</div></div></div>`;$('ovHelp').classList.add('on');}
 
-  // Inicializar tipo de negócio com fechar ao clicar fora
-  document.addEventListener('click', e=>{
-    ['tipoSugsS','tipoSugsC'].forEach(id=>{ const el=$(id); if(el&&!el.parentElement.contains(e.target)) el.style.display='none'; });
-  });
+// LOGO
+function previewLogo(){const file=$('logoFile')&&$('logoFile').files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{$('logoImg').src=e.target.result;$('logoImg').style.display='block';$('logoPh').style.display='none';};reader.readAsDataURL(file);}
+function removerLogo(){$('logoImg').style.display='none';$('logoPh').style.display='flex';$('logoFile').value='';}
 
-  // Capturar código da URL (AJUSTE 3)
+// fechar modais
+document.addEventListener('click',e=>{['tipoSugsS','tipoSugsC'].forEach(id=>{const el=$(id);if(el&&el.style.display==='block'){const inp=el.previousElementSibling;if(inp&&!inp.contains(e.target)&&!el.contains(e.target))el.style.display='none';}});});
+
+// INIT
+document.addEventListener('DOMContentLoaded',async()=>{
+  // Capturar código da URL
   const codLink=capturarCodigoDaURL();
-
   // Verificar REST_ID salvo
   const savedId=localStorage.getItem('ge_rest_id');
-  if(savedId) REST_ID=savedId;
-
-  if(REST_ID) {
-    // Verificar sessão ativa (AJUSTE 7)
-    const sessaoUid=verificarSessao();
-    if(sessaoUid) {
-      try {
-        if(sessaoUid==='PROP') {
-          const r=await sb(`ge_restaurantes?id=eq.${REST_ID}&select=nome_restaurante`);
-          if(r.length){ FUNC_NOME=r[0].nome_restaurante; FUNC_ROLE='proprietario'; await entrarApp(); return; }
-        } else {
-          const r=await sb(`ge_funcionarios?id=eq.${sessaoUid}&restaurante_id=eq.${REST_ID}&select=*`);
-          if(r.length){ FUNC_ID=r[0].id; FUNC_NOME=r[0].nome; FUNC_ROLE='funcionario'; await entrarApp(); return; }
-        }
-      } catch(e){ limparSessao(); }
+  if(savedId)REST_ID=savedId;
+  if(REST_ID){
+    const sessUid=verificarSessao();
+    if(sessUid){
+      try{
+        if(sessUid==='PROP'){const r=await sb(`ge_restaurantes?id=eq.${REST_ID}&select=nome_restaurante`);if(r.length){FUNC_NOME=r[0].nome_restaurante;FUNC_ROLE='proprietario';await entrarApp();return;}}
+        else{const r=await sb(`ge_funcionarios?id=eq.${sessUid}&restaurante_id=eq.${REST_ID}&select=*`);if(r.length){FUNC_ID=r[0].id;FUNC_NOME=r[0].nome;FUNC_ROLE='funcionario';await entrarApp();return;}}
+      }catch(e){limparSessao();}
     }
-    // Sessão expirada — ir para PIN
-    try {
-      const r=await sb(`ge_restaurantes?id=eq.${REST_ID}&select=nome_restaurante,tipo_negocio`);
-      if(r.length){
-        $('loginNome').textContent=r[0].nome_restaurante;
-        $('loginTipo').textContent=r[0].tipo_negocio||'';
-        mostrarTela('telaLogin'); pinDigitos=''; renderPin(); return;
-      }
-    } catch(e){}
+    try{const r=await sb(`ge_restaurantes?id=eq.${REST_ID}&select=nome_restaurante,tipo_negocio`);if(r.length){$('loginNome').textContent=r[0].nome_restaurante;$('loginTipo').textContent=r[0].tipo_negocio||'';mostrarTela('telaLogin');pinDigitos='';renderPin();return;}}catch(e){}
   }
-
-  // Código na URL — auto-preencher e ir para login
-  if(codLink) {
-    try {
-      const r=await sb(`ge_restaurantes?codigo_acesso=eq.${codLink}&select=*`);
-      if(r.length){
-        REST_ID=r[0].id; localStorage.setItem('ge_rest_id',REST_ID);
-        $('loginNome').textContent=r[0].nome_restaurante;
-        $('loginTipo').textContent=r[0].tipo_negocio||'';
-        mostrarTela('telaLogin'); pinDigitos=''; renderPin(); return;
-      }
-    } catch(e){}
-  }
-
-  // Verificar se há algum estabelecimento cadastrado
-  try {
-    const total=await sb('ge_restaurantes?select=id&limit=1');
-    if(total.length) mostrarTela('tela1Acesso');
-    else mostrarTela('telaSetup');
-  } catch(e){ mostrarTela('telaSetup'); }
+  if(codLink){try{const r=await sb(`ge_restaurantes?codigo_acesso=eq.${codLink}&select=*`);if(r.length){REST_ID=r[0].id;localStorage.setItem('ge_rest_id',REST_ID);$('loginNome').textContent=r[0].nome_restaurante;$('loginTipo').textContent=r[0].tipo_negocio||'';mostrarTela('telaLogin');pinDigitos='';renderPin();return;}}catch(e){}}
+  try{const total=await sb('ge_restaurantes?select=id&limit=1');if(total.length)mostrarTela('tela1Acesso');else mostrarTela('telaSetup');}catch(e){mostrarTela('telaSetup');}
 });
 
 </script>
