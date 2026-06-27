@@ -417,6 +417,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);font-siz
         <button class="btn-c b-am" onclick="regenerarCod()">🔄 Gerar Novo Link / Código</button>
       </div>
       <div class="cfg-c">
+        <div class="cfg-t">🚚 Fornecedores</div>
+        <div class="cfg-s">Cadastre seus fornecedores com nome e WhatsApp. Ao cadastrar produtos, vincule cada um ao fornecedor — a lista de compras será enviada separada para cada um.</div>
+        <div id="listaFornec"></div>
+        <button class="btn-c b-gn" onclick="abrirNovoFornec()" style="margin-top:7px;">+ Adicionar Fornecedor</button>
+      </div>
+      <div class="cfg-c">
         <div class="cfg-t">👥 Funcionários</div>
         <div class="cfg-s">Cadastre cada funcionário com nome e PIN único de 4 dígitos.</div>
         <div id="listaFuncs"></div>
@@ -536,6 +542,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);font-siz
         <input class="inp" type="date" id="mpVal" oninput="atualizarStatusVal()">
       </div>
     </div>
+    <div class="fg" style="margin-top:4px;">
+      <label class="fl">Fornecedor <span class="fl-hint">— opcional</span></label>
+      <select class="inp" id="mpFornec">
+        <option value="">Sem fornecedor vinculado</option>
+      </select>
+    </div>
     <div class="val-status-box" id="mpValStatus"></div>
     <div class="val-status-box" id="mpPrevBox" style="display:none;border-radius:9px;padding:9px 12px;font-size:11px;font-weight:600;margin-bottom:9px;line-height:1.5;"></div>
     <div class="mb">
@@ -573,7 +585,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);font-siz
       <label class="fl">Quantidade</label>
       <div class="qty-p">
         <button class="qp-b" onclick="ajQ(-1)">−</button>
-        <div class="qp-v" id="qpV">1</div>
+        <input class="qp-v" id="qpV" type="number" value="1" min="0" step="1" inputmode="numeric" style="border:none;outline:none;background:transparent;width:100%;text-align:center;font-size:23px;font-weight:800;color:var(--t);font-family:Inter,sans-serif;" oninput="movQty=Math.max(0,parseFloat(this.value)||0);updPrev();" onfocus="this.select()">
         <button class="qp-b" onclick="ajQ(1)">+</button>
       </div>
     </div>
@@ -594,12 +606,66 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);font-siz
     <input type="hidden" id="mfId">
     <div class="fg"><label class="fl">Nome do Funcionário</label><input class="inp" id="mfNome" placeholder="EX: MARIA DA SILVA" oninput="this.value=this.value.toUpperCase()"></div>
     <div class="fg"><label class="fl">PIN de 4 dígitos</label><input class="inp" id="mfPin" type="password" maxlength="4" inputmode="numeric" placeholder="••••" style="letter-spacing:8px;font-size:22px;text-align:center;"></div>
+    <div id="mfPerms" style="display:none;margin-top:4px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <label class="fl" style="margin:0;">🔐 Permissões</label>
+        <button onclick="liberarTudo()" style="padding:5px 12px;background:var(--gn);border:none;border-radius:8px;color:#0B1120;font-size:11px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;">✅ Liberar Tudo</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <label style="display:flex;align-items:center;justify-content:space-between;background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:10px 13px;cursor:pointer;">
+          <span style="font-size:13px;color:var(--t);">📋 Ver Histórico</span>
+          <input type="checkbox" id="permHist" style="width:18px;height:18px;accent-color:var(--gn);cursor:pointer;">
+        </label>
+        <label style="display:flex;align-items:center;justify-content:space-between;background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:10px 13px;cursor:pointer;">
+          <span style="font-size:13px;color:var(--t);">📊 Ver Insights e Relatórios</span>
+          <input type="checkbox" id="permInsights" style="width:18px;height:18px;accent-color:var(--gn);cursor:pointer;">
+        </label>
+        <label style="display:flex;align-items:center;justify-content:space-between;background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:10px 13px;cursor:pointer;">
+          <span style="font-size:13px;color:var(--t);">📦 Cadastrar/Editar Produtos</span>
+          <input type="checkbox" id="permProdutos" style="width:18px;height:18px;accent-color:var(--gn);cursor:pointer;">
+        </label>
+        <label style="display:flex;align-items:center;justify-content:space-between;background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:10px 13px;cursor:pointer;">
+          <span style="font-size:13px;color:var(--t);">💰 Ver Valor do Estoque</span>
+          <input type="checkbox" id="permValor" style="width:18px;height:18px;accent-color:var(--gn);cursor:pointer;">
+        </label>
+        <label style="display:flex;align-items:center;justify-content:space-between;background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:10px 13px;cursor:pointer;">
+          <span style="font-size:13px;color:var(--t);">↩️ Estornar Movimentos</span>
+          <input type="checkbox" id="permEstornar" style="width:18px;height:18px;accent-color:var(--gn);cursor:pointer;">
+        </label>
+      </div>
+    </div>
     <div class="mb">
       <button class="mb-s" onclick="fM('ovFunc')">Cancelar</button>
       <button class="mb-p" onclick="salvarFunc()">Salvar</button>
     </div>
     <div id="mfExc" style="display:none;margin-top:8px;">
       <button class="mb-d" onclick="excluirFunc()" style="width:100%">🗑️ Remover Funcionário</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FORNECEDOR -->
+<div class="overlay" id="ovFornec">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mh"></div>
+    <div class="mt" id="mfnTit">Novo Fornecedor</div>
+    <div class="ms">Cadastre o fornecedor e vincule aos produtos. A lista de compras será enviada separada para cada um.</div>
+    <input type="hidden" id="mfnId">
+    <div class="fg"><label class="fl">Nome do Fornecedor</label><input class="inp" id="mfnNome" placeholder="Ex: Distribuidora Silva, João Biscoitos..."></div>
+    <div class="fg">
+      <label class="fl">WhatsApp</label>
+      <div class="wpp-input-wrap">
+        <span class="wpp-ddi">🇧🇷 +55</span>
+        <div class="wpp-sep"></div>
+        <input class="wpp-num" id="mfnWpp" placeholder="(DDD) Número" inputmode="tel" maxlength="15" oninput="maskWpp(this)">
+      </div>
+    </div>
+    <div class="mb">
+      <button class="mb-s" onclick="fM('ovFornec')">Cancelar</button>
+      <button class="mb-p" onclick="salvarFornec()">Salvar</button>
+    </div>
+    <div id="mfnExc" style="display:none;margin-top:8px;">
+      <button class="mb-d" onclick="excluirFornec()" style="width:100%">🗑️ Remover Fornecedor</button>
     </div>
   </div>
 </div>
@@ -623,7 +689,8 @@ const sb=(path,opts={})=>fetch(`${SB_URL}/rest/v1/${path}`,{headers:{'apikey':SB
 const EMOJI_CATS=[{tab:'🍽️',nome:'Alimentos',emojis:['🍖','🥩','🍗','🥚','🍳','🥓','🌭','🍔','🍕','🌮','🌯','🥙','🧆','🥪','🫔','🥗','🥨','🥐','🥖','🍞','🥯','🧇','🥞','🍝','🍜','🍲','🍛','🍣','🍱','🥟','🍤','🍙','🍚','🍘','🍥','🥘','🫕','🍢','🥣','🍡','🍧','🍦','🧀','🥛','🧈','🍯','🫙','🥫','🫚','🫒','🧂','🍰','🎂','🧁','🍮','🍭','🍬','🍫','🍿','🍩','🍪','🥜','🌰','🫘','🧃','🍶','☕','🫖','🥤','🌶️','🧄','🧅','🍴','🔪','🥄','🫙','🏪','🛒','🏬','🥡','🧊','🫗','🥢','🍽️','🎁','🥚','🧋','🍵','🥛','🧉']},{tab:'🥦',nome:'Hortifruti',emojis:['🥦','🥬','🥒','🌽','🍅','🍆','🥑','🧄','🧅','🥕','🌶️','🫑','🥔','🍠','🫛','🌿','🌾','🍃','🌱','🍀','🍄','🫘','🍋','🍊','🍇','🍓','🫐','🍈','🍒','🍑','🥭','🍍','🥥','🍌','🍎','🍏','🍐','🍉','🥝','🌺','🌸','🌹','🌷','💐','🪷','🌻','🌼','🫒','🥜','🌰','🫙','🎃','🌲','🌳','🌴','🪴','🥗','🥣','🌾','🌿','☘️','🍀','🎍','🎋','🪸','🫑','🫛','🥬','🥦','🌽','🌰','🍄','🧅','🧄','🥔','🍠','🫘','🧴','🌱','🍃']},{tab:'🥤',nome:'Bebidas',emojis:['🥤','🧃','☕','🍵','🧋','🍶','🍺','🍻','🥂','🍷','🥃','🍸','🍹','🧉','🍾','🫖','🥛','🧊','🫗','🧴','🫙','💧','🌊','🌿','🍫','🍬','🍭','🍮','🧁','🍰','🎂','🍩','🍪','🧂','🪣','🛢️','⛽','💊','🌡️','🧪','⚗️','🔬']},{tab:'💊',nome:'Saúde & Farmácia',emojis:['💊','💉','🩺','🩹','🩻','🏥','🧬','🔬','🩼','🧪','🩸','🫀','🫁','🧠','🦷','🦴','💪','🚑','⚖️','🧴','🧼','🫧','🪥','🌡️','⚗️','🦺','🧘','🏋️','🦽','🦾','🫙','🪒','🛁','🚿','💆','🧖','🏊','🤸','🧗','🚴','⛹️','🏄','🤽','🥊','🥋','⛷️','🏂','🎿','🛷','⛸️','🏒','🥅','🍎','🥦','🥕','🌿','🌱','🍵','💧','🌊','☀️','🌙','⭐']},{tab:'👗',nome:'Vestuário & Moda',emojis:['👗','👘','🥻','👙','👚','👛','👜','👝','🎒','🧳','👒','🎩','🧢','⛑️','👔','👕','👖','🧤','🧣','🧥','🥾','👞','👟','🥿','👠','👡','👢','🩴','🩱','🩲','🩳','🧦','🪖','💍','💎','👑','💄','🪮','🧵','🪡','🧶','🪢','🎀','🕶️','🥽','🦺','🥼','📿','🪬','🧿','🔮','💠','🪩','🎭','🎪','🏷️','🛍️','💼','🗃️','✂️','🧷','📌']},{tab:'🚗',nome:'Automotivo',emojis:['🚗','🚕','🚙','🚌','🚎','🏎️','🚓','🚑','🚒','🚐','🛻','🚚','🚛','🚜','🏍️','🛵','🛺','🚲','🛴','🛹','🚦','🚧','⛽','🛞','🔧','🪛','🔩','⚙️','🪝','🧰','🛢️','⚡','🔋','🪫','🔌','🪜','🚨','🔦','💡','🗺️','🧭','🔑','🗝️','🅿️','🚥','🔨','⚒️','🛠️','⛏️','🪚','🔗','⛓️','🧲','🔐','🔒','🛡️','⚓','⛵','🚢','✈️','🚁','🛸','🚀','🛶','⛴️','🚤','🛥️','🚂','🚃','🚄','🚅','🚆','🚇','🚈','🚉','🚊','🚞','🚝','🚋','🏗️','🧱','🪵','⛺','🛖','🏕️']},{tab:'🔧',nome:'Ferramentas & Serviços',emojis:['🔧','🪛','🔩','⚙️','🔨','⚒️','🛠️','⛏️','🪚','🔗','⛓️','🧲','🪝','🔑','🗝️','🔐','🔒','🔓','💡','🔦','🕯️','🪔','🧰','🗜️','⚖️','🪤','🪣','🪜','📐','📏','✂️','🗃️','🗄️','📦','⚗️','🧫','🪓','🗺️','🧭','📡','🛰️','🔋','🪫','🔌','⚡','🔥','💧','🌊','🌡️','☀️','🌙','⛅','🌤️','🌬️','🌪️','🌈','❄️','⛄','💨','💦','🫧','🧱','🪵','⛺','🛖','🏕️','🖊️','🖋️','✒️','🖌️','🖍️','📌','📍','🗂️','📁','📂','🗑️']},{tab:'🏠',nome:'Casa & Decoração',emojis:['🏠','🏡','🏘️','🛋️','🪑','🪞','🪟','🛏️','🛁','🚿','🪠','🧹','🧺','🧻','🪣','🧼','🫧','🧴','🪥','🔑','🚪','🪤','🧱','🪵','⚙️','💡','🔌','🪫','🧯','🪜','🛢️','🖼️','🪴','🌡️','⏰','📺','📻','🖥️','🛒','🪝','🔐','🔒','🏺','🫙','🕯️','🪔','💎','🌸','🌺','🌹','🌷','💐','🪷','🌻','🌼','🎨','🛋️','🪑','🛏️','🛁','🚿','🪠','🚽','🚰','🍳','🥘','🍲','🫕','🔪','🥄','🍴','🥢','🫙','🧊','🥗','🫗','🧹','🧺','🧻','🪣','🧼','🫧','🧴','🪥','🪒','✂️','🧷','📌','📺','📻','🖥️','📱','💻','⌨️','🖱️','🔋','🔌','💡','🔦','🕯️']},{tab:'💄',nome:'Beleza & Estética',emojis:['💄','💅','💆','💇','🪮','🧴','🧼','🪥','🪒','✂️','💈','🛁','🚿','🌸','🌺','🌹','🌷','💐','🪷','🫧','💎','💍','👑','💋','🎀','🪞','👜','🛍️','🧣','🧤','🧢','👒','🕶️','🥽','🌟','✨','💫','🧖','🌼','🌻','💮','🏵️','🌿','🫙','🧴','🪔','🕯️','🌡️','⚗️','🧪','🔬','💊','🩺','🩹','🌸','🌺','🌹','🌷','💐','🪷','🌻','🌼','💮','🏵️','🎀','💄','💅','👄','💋','💍','💎','👑','📿','🪬','🧿','🫧','🧴','🧼','🪥','🪒','✂️','💈','🪮','🧖','💆','💇','🛁','🚿','🪠','🚰','🌡️','🌿','🌱','🌾','🍃','☘️']},{tab:'📱',nome:'Tecnologia',emojis:['📱','💻','🖥️','🖨️','⌨️','🖱️','🖲️','💽','💾','💿','📀','📷','📸','📹','🎥','📽️','🎞️','📞','☎️','📟','📠','📺','📻','🧭','⏱️','⏰','⌚','📡','🔋','🪫','🔌','💡','🔦','🕹️','🎮','🤖','🔬','🔭','🛰️','🧮','🔐','💼','📲','🤳','🎙️','🎚️','🎛️','📼','💽','💾','💿','📀','🗜️','🗃️','🗄️','📦','🧰','🔧','🪛','🔩','⚙️','🔑','🔐','🔒','🔓','🔗','⛓️','🧲','⚡','🔋','🪫','🔌','💡','🔦','🕯️','🪔','📡','🛰️','🚀','🛸','🤖','🧬']},{tab:'🐾',nome:'Pet Shop',emojis:['🐾','🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🦆','🦅','🦉','🦇','🐝','🐛','🦋','🐌','🐞','🐜','🦟','🐢','🐍','🦎','🐠','🐟','🐡','🐬','🐳','🦈','🦭','🐙','🦑','🦐','🦞','🦀','🐚','🪺','🪹','🦮','🐕','🐈','🐇','🐿️','🦔','🦴','🎾','🧴','🛁','🚿','🪮','✂️','💊','💉','🩺','🩹','🏥','🏠','🐾','🌿','🌾','🥣','🦴','🏷️','🛒','📦','🧰','🪣','🧹','🦜','🐓','🦃','🦢','🦩','🦚','🦤','🪶','🐦‍⬛','🐕‍🦺','🐩','🦮','🐈‍⬛','🐇','🦔','🦦','🦥','🦙','🦘','🦬','🐄','🐖','🐏','🐑','🐐','🦌','🐓','🐁','🐀']},{tab:'📚',nome:'Papelaria & Escritório',emojis:['📚','📖','📝','✏️','🖊️','🖋️','✒️','🖌️','🖍️','📌','📍','✂️','🗃️','🗄️','🗑️','📋','📁','📂','🗂️','📓','📔','📒','📕','📗','📘','📙','📄','📃','📑','🗒️','🗓️','📅','📆','📇','📊','📈','📉','🗺️','📏','📐','🔒','🔓','🔏','🔐','💼','🧾','🖇️','📎','🔖','🏷️','🖥️','🖨️','⌨️','🖱️','📮','📬','📭','📪','📫','📩','📨','📧','📤','📥','📦','📯','📢','📣','🔔','🔕','📵','🔇','🔈','🔉','🔊','📡','🔭','🔬','🧪','⚗️','🏫','🏢','🏬','🏪','💼','👔','🗂️','📋','📊','📈','📉']},{tab:'⚽',nome:'Esporte & Lazer',emojis:['⚽','🏀','🏈','⚾','🥎','🎾','🏐','🏉','🥏','🎱','🏓','🏸','🏒','🥍','🏑','🏏','🪃','🥅','⛳','🪁','🎣','🤿','🎽','🎿','🛷','🥌','🎯','🏆','🥇','🥈','🥉','🏅','🎖️','🏵️','🎗️','🎟️','🎫','🥊','🥋','🤺','⛷️','🏂','🏄','🚣','🧗','🚵','🚴','🎭','🎨','🎬','🎤','🎧','🎸','🎺','🎻','🥁','🪘','🎷','🎹','🪗','🎵','🎶','🎙️','🎚️','🎛️','🎮','🕹️','🃏','🀄','🎲','♟️','🎪','🎠','🎡','🎢','⛹️','🏋️','🤸','🤼','🤽','🤾','🏊','🏇','🪂','🎰','🎳','🏹','🛹','🛼','🛷']},{tab:'🍽️',nome:'Restaurante & Bar',emojis:['🍽️','🥄','🍴','🔪','🥢','🫙','🍳','🥘','🍲','🫕','🥗','🥣','🍖','🥩','🍗','🌮','🌯','🥙','🧆','🥪','🫔','🌭','🍔','🍕','🍝','🍜','🍛','🍣','🍱','🥟','🍤','🍙','🍚','🍘','🍥','🥂','🍾','🍷','🥃','🍸','🍹','🍺','🍻','🧉','☕','🫖','🍵','🧁','🎂','🍰','🍮','🍩','🍪','🍫','🍬','🍭','🍿','🧇','🥞','🏪','🏬','🏩','🏨','🏦','🏥','🏤','🏣','🏢','🏛️','🏰','🏯','⏰','📅','📆','🗓️']},{tab:'🏗️',nome:'Construção & Reforma',emojis:['🏗️','🧱','🪵','⚒️','🛠️','⛏️','🔨','🪚','🔧','🪛','🔩','⚙️','🪝','🧰','📐','📏','🗜️','🪜','🧲','💡','🔦','🕯️','🔌','🔋','🛢️','⛽','🪣','🚪','🛋️','🪑','🛏️','🏠','🏡','🏘️','🏚️','🏛️','🏟️','🏗️','🏢','🏬','🌉','🌁','🗺️','🔑','⛓️','🔗','🪤','🏁','🚧','⚠️','⛺','🛖','🪟','🪞','🛁','🚿','🪠','🚰','🚽','🪣','🧹','🧺','🧻','🧼','🫧','🚪','🏠','🏡','🏘️','🏚️','🏛️','🏟️','🏗️','🏢','🏬','🏭','🔥','💧','🌊','💨','🌬️','⚡','🔋','🪫','🔌','💡','🔦','🕯️','🪔']},{tab:'🌿',nome:'Orgânicos & Naturais',emojis:['🌿','🌱','🌾','🍀','🍃','☘️','🌲','🌳','🌴','🌵','🪸','🪨','🪵','🌊','💧','🌞','🌟','⭐','🌈','❄️','🫙','🧴','🌻','🌸','🌺','🌹','🌷','💐','🪷','🫚','🫒','🥦','🥬','🥒','🧅','🧄','🥕','🍋','🌶️','🥝','🍅','🍏','🥑','🌽','🫛','🫘','🌰','🥜','🍄','🌾','⚗️','🧪','🫙','🌡️','☀️','🌙','⭐','🌟','💫','✨','🌈','🌊','💧','🔥','💨','🌬️','🌏','🌍','🌎','🌐','⛰️','🏔️','🗻','🏕️','🌅','🌄','🌠','🌃','🪴','🌱','🌿','🍃','🍀','☘️','🌾','🌵','🌲','🌳','🌴','🪸']},{tab:'🏥',nome:'Clínica & Estética Médica',emojis:['🏥','🚑','💊','💉','🩺','🩹','🩻','🧬','🔬','🧪','⚗️','🫀','🫁','🧠','🦷','🦴','🩼','🦽','🦾','💪','🩸','🌡️','⚖️','🧴','🧼','🫧','🪥','🏋️','🧘','🏊','🤸','🚴','⛹️','🏄','🤽','🧗','🚵','🤺','🌿','🌱','🍵','💧','🍎','🥦','🥕','🧃','🌾','🫙','🧴','🔬','⚕️','🏥','🏨','🏩','🏪','🏬','🏢','🏛️','⚖️','📋','📝','📊']},{tab:'🏨',nome:'Hotelaria & Turismo',emojis:['🏨','🏩','🏪','🏫','🏬','🏭','🏯','🏰','🗼','🗽','🧳','🎫','🎟️','🚢','✈️','🚂','🚁','🛶','⛵','🪂','🏕️','🌅','🌇','🌆','🌃','🌉','🌄','🌠','🎇','🎆','🏮','🪔','🛎️','🔑','🛏️','🛁','🛋️','🪑','🍽️','🥂','🍾','🎊','🎉','🎈','🎁','🎀','🏊','🛀','⛩️','🗺️','🧭','🌏','🌍','🌎','⛰️','🏔️','🗻','🌋','🏝️','🏖️','🏜️','🌅','🌄','🌠','🌃','🌆','🌇','🌉','🌁','🎑','🏞️','🎠','🎡','🎢','🎪','🎭','🎨','🎬','🎤','🎵']},{tab:'🏦',nome:'Finanças & Negócios',emojis:['🏦','💰','💵','💴','💶','💷','💳','💸','🪙','💹','📊','📈','📉','💼','🗂️','📋','📁','📂','📝','✏️','🖊️','🖋️','✒️','📌','📍','📎','🖇️','🔖','🏷️','🧾','📄','📃','📑','🗒️','🗓️','📅','📆','📇','🔐','🔒','🔓','🔑','🗝️','🔏','🛡️','⚖️','📜','📋','📊','📈','🏪','🏬','🏢','🏛️','🏦','🏩','🏨','🏫','🏭','🏗️','💡','🎯','🏆','🥇','🎖️','🏅','🎗️','🎀','⭐','🌟','💫']},{tab:'🎓',nome:'Educação & Cursos',emojis:['🎓','📚','📖','📝','✏️','🖊️','🖋️','✒️','🖌️','🖍️','📌','📍','📐','📏','📓','📔','📒','📕','📗','📘','📙','📚','🗂️','📁','📂','📋','📊','📈','🏫','🏛️','🏢','🏬','💻','🖥️','📱','⌨️','🖱️','🖨️','📡','🔭','🔬','🧪','⚗️','🧬','🧮','💡','🔦','📢','📣','🔔','🎤','🎧','🎵','🎶','🎭','🎨','🎬','🎞️','📽️','📺','📻','🎙️','🎚️','🎛️','🧩','🎮','🕹️','🎲','♟️','🃏','🀄','🏆','🥇','🎖️','🏅','🎗️']},{tab:'🎁',nome:'Presentes & Eventos',emojis:['🎁','🎀','🎊','🎉','🎈','🎏','🎐','🎑','🧧','🎆','🎇','🎋','🎍','🎎','🎃','🎄','🎠','🎡','🎢','🎪','🎭','🎨','🖼️','🎬','🎤','🎧','🎵','🎶','🎸','🎺','🎻','🥁','🪘','🎷','🎹','🪗','🎙️','🎚️','🎛️','📻','📺','🕯️','🪔','🏮','🧨','✨','💫','⭐','🌟','💥','🔥','🌈','❄️','☃️','🎂','🍰','🧁','🍭','🍬','🍫','🍿','🥂','🍾','🥃','🍸','🍹','🏆','🥇','🥈','🥉','🏅','🎖️','🏵️','🎗️','🎟️','🎫','🎀','🎁']}];
 
 // Estado
-let REST_ID=null,REST_NOME=null,FUNC_ID=null,FUNC_NOME=null,FUNC_ROLE=null;
+let REST_ID=null,REST_NOME=null,FUNC_ID=null,FUNC_NOME=null,FUNC_ROLE=null,FUNC_PERMS={};
+let todosFornecs=[];
 let prodAtual=null,funcAtual=null;
 let todosProds=[],todosFuncs=[],todasCats=[],todasUnits=[];
 let emojiTarget=null,pinDigitos='',movQty=1,subtipoSaida='normal',histFiltro='';
@@ -633,8 +700,14 @@ let emojiTabSel=0;
 const $=id=>document.getElementById(id);
 const toast=(m,t='ok',d=2600)=>{const el=$('toast');el.textContent=m;el.className='show'+(t==='err'?' err':t==='warn'?' warn':t==='info'?' info':'');clearTimeout(el._t);el._t=setTimeout(()=>el.className='',d);};
 const fmt=v=>(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-const fmtN=v=>(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-const diasParaVencer=dt=>dt?Math.round((new Date(dt+'T12:00:00')-new Date())/86400000):null;
+const fmtN=v=>{const n=parseFloat(v)||0;return n%1===0?n.toLocaleString('pt-BR'):n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});};
+const numFmt=v=>{const n=parseFloat(v)||0;return n%1===0?n.toString():n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});};
+const diasParaVencer=dt=>{
+  if(!dt)return null;
+  const hoje=new Date();hoje.setHours(0,0,0,0);
+  const val=new Date(dt+'T00:00:00');val.setHours(0,0,0,0);
+  return Math.round((val-hoje)/86400000);
+};
 
 // TELAS
 const TELAS=['tela1Acesso','telaSetup','telaCodigoFunc','telaLogin','telaApp'];
@@ -666,7 +739,7 @@ function renderEmojiAba(idx){emojiTabSel=idx;const tabs=$('emojiTabs');const gri
 function selecionarEmoji(e){if(emojiTarget==='cat'){$('emjBtn')&&($('emjBtn').textContent=e);$('novaCatIco')&&($('novaCatIco').value=e);}else if(emojiTarget==='prod'){const mpE=$('mpEmojiBtn');if(mpE){mpE.textContent=e;$('mpEmoji')&&($('mpEmoji').value=e);}}$('emojiPicker').style.display='none';}
 
 // STATUS VALIDADE
-function labelVal(p){const dtVal=p.data_validade,dtFab=p.data_fabricacao;if(!dtVal)return{ico:'⬜',cls:'',txt:'Sem validade'};if(dtFab&&new Date(dtFab+'T12:00:00')>new Date())return{ico:'⚠️',cls:'warn',txt:'Fab. futura'};const dias=diasParaVencer(dtVal);if(dias===null)return{ico:'⬜',cls:'',txt:''};if(dias<0)return{ico:'🔴',cls:'venc',txt:'VENCIDO'};if(dias<=7)return{ico:'🔴',cls:'venc',txt:`Vence em ${dias}d`};if(dias<=30)return{ico:'⚠️',cls:'warn',txt:`${dias} dias`};return{ico:'✅',cls:'ok',txt:`${dias} dias`};}
+function labelVal(p){const dtVal=p.data_validade,dtFab=p.data_fabricacao;if(!dtVal)return{ico:'⬜',cls:'',txt:'Sem validade'};if(dtFab&&new Date(dtFab+'T12:00:00')>new Date())return{ico:'⚠️',cls:'warn',txt:'Fab. futura'};const dias=diasParaVencer(dtVal);if(dias===null)return{ico:'⬜',cls:'',txt:''};if(dias<0)return{ico:'🔴',cls:'venc',txt:'VENCIDO'};if(dias===0)return{ico:'⚠️',cls:'warn',txt:'Vence HOJE'};if(dias<=7)return{ico:'⚠️',cls:'warn',txt:`Vence em ${dias}d`};if(dias<=30)return{ico:'⚠️',cls:'warn',txt:`${dias} dias`};return{ico:'✅',cls:'ok',txt:`${dias} dias`};}
 // PREVISÃO DE QUANDO O PRODUTO VAI ACABAR
 // Calcula média de consumo dos últimos 30 dias e estima dias restantes
 async function calcularPrevisao(prodId, qtdAtual, unidade){
@@ -694,15 +767,26 @@ async function entrarComCodigo(){const cod=$('codigoFunc').value.trim().toUpperC
 function pinD(d){if(pinDigitos.length>=4)return;pinDigitos+=d;renderPin();if(pinDigitos.length===4)setTimeout(validarPin,120);}
 function pinDel(){if(pinDigitos.length>0){pinDigitos=pinDigitos.slice(0,-1);renderPin();}}
 function renderPin(){for(let i=0;i<4;i++){const el=$('pd'+i);if(el)el.classList.toggle('filled',i<pinDigitos.length);}const err=$('pinErro');if(err)err.textContent='';}
-async function validarPin(){try{const rp=await sb(`ge_restaurantes?id=eq.${REST_ID}&pin_dono=eq.${pinDigitos}&select=id,nome,nome_proprietario`);if(rp.length){FUNC_ID=null;FUNC_NOME=rp[0].nome_proprietario||rp[0].nome;REST_NOME=rp[0].nome;FUNC_ROLE='proprietario';salvarSessao('PROP');await entrarApp();return;}const rf=await sb(`ge_funcionarios?restaurante_id=eq.${REST_ID}&pin=eq.${pinDigitos}&select=*`);if(rf.length){FUNC_ID=rf[0].id;FUNC_NOME=rf[0].nome;FUNC_ROLE='funcionario';salvarSessao(rf[0].id);await entrarApp();return;}pinDigitos='';renderPin();const err=$('pinErro');if(err){err.textContent='PIN incorreto. Tente novamente.';setTimeout(()=>err.textContent='',2000);}}catch(e){toast('Erro: '+e.message,'err');pinDigitos='';renderPin();}}
+async function validarPin(){try{const rp=await sb(`ge_restaurantes?id=eq.${REST_ID}&pin_dono=eq.${pinDigitos}&select=id,nome,nome_proprietario`);if(rp.length){FUNC_ID=null;FUNC_NOME=rp[0].nome_proprietario||rp[0].nome;REST_NOME=rp[0].nome;FUNC_ROLE='proprietario';salvarSessao('PROP');await entrarApp();return;}const rf=await sb(`ge_funcionarios?restaurante_id=eq.${REST_ID}&select=*`);const rfF=rf.filter(f=>f.pin===pinDigitos);if(rfF&&rfF.length){FUNC_ID=rfF[0].id;FUNC_NOME=rfF[0].nome;FUNC_ROLE='funcionario';FUNC_PERMS={historico:rfF[0].perm_historico,insights:rfF[0].perm_insights,produtos:rfF[0].perm_produtos,valor:rfF[0].perm_valor_estoque,estornar:rfF[0].perm_estornar};salvarSessao(rfF[0].id);const rrest=await sb(`ge_restaurantes?id=eq.${REST_ID}&select=nome`);REST_NOME=rrest.length?rrest[0].nome:'';await entrarApp();return;}pinDigitos='';renderPin();const err=$('pinErro');if(err){err.textContent='PIN incorreto. Tente novamente.';setTimeout(()=>err.textContent='',2000);}}catch(e){toast('Erro: '+e.message,'err');pinDigitos='';renderPin();}}
 function trocarEst(){if(confirm('Sair e trocar de estabelecimento?')){REST_ID=null;FUNC_ID=null;FUNC_NOME=null;FUNC_ROLE=null;localStorage.removeItem('ge_rest_id');limparSessao();mostrarTela('tela1Acesso');}}
 
 // ENTRAR NO APP
-async function entrarApp(){mostrarTela('telaApp');$('topNome').textContent=REST_NOME||'Gerencion Estoque';$('topUser').textContent=FUNC_ROLE==='proprietario'?'👑 '+FUNC_NOME:'👤 '+FUNC_NOME;const navCfg=$('navCfg');if(navCfg)navCfg.style.display=FUNC_ROLE==='proprietario'?'flex':'none';await Promise.all([carregarProds(),carregarFuncs(),carregarCats(),carregarUnits()]);document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));$('pg-dash')&&$('pg-dash').classList.add('on');document.querySelectorAll('.nav-btn').forEach((b,i)=>{if(i===0)b.classList.add('on');else b.classList.remove('on');});renderDash();}
-function sair(){if(confirm('Deseja sair?')){limparSessao();REST_ID=null;FUNC_ID=null;FUNC_NOME=null;FUNC_ROLE=null;pinDigitos='';mostrarTela('tela1Acesso');}}
+async function entrarApp(){mostrarTela('telaApp');$('topNome').textContent=REST_NOME||'Gerencion Estoque';$('topUser').textContent=FUNC_ROLE==='proprietario'?'👑 '+FUNC_NOME+' · Proprietário(a)':'👤 '+FUNC_NOME+' · Funcionário(a)';
+  // Aplicar permissões nas abas de navegação
+  if(FUNC_ROLE!=='proprietario'){
+    const navHist=document.querySelector('#nav .nav-btn:nth-child(3)');
+    const navIns=document.querySelector('#nav .nav-btn:nth-child(4)');
+    if(navHist)navHist.style.display=FUNC_PERMS.historico?'flex':'none';
+    if(navIns)navIns.style.display=FUNC_PERMS.insights?'flex':'none';
+  }
+  const logoSalva=REST_ID?localStorage.getItem('ge_logo_'+REST_ID):null;
+  const ico=$('topIco');if(ico){if(logoSalva)ico.innerHTML='<img src="'+logoSalva+'" style="width:34px;height:34px;object-fit:cover;border-radius:8px;">';else ico.textContent='GE';}
+  const navCfg=$('navCfg');if(navCfg)navCfg.style.display=FUNC_ROLE==='proprietario'?'flex':'none';await Promise.all([carregarProds(),carregarFuncs(),carregarCats(),carregarUnits(),carregarFornecs()]);document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));$('pg-dash')&&$('pg-dash').classList.add('on');document.querySelectorAll('.nav-btn').forEach((b,i)=>{if(i===0)b.classList.add('on');else b.classList.remove('on');});renderDash();}
+function sair(){if(confirm('Deseja sair?')){limparSessao();REST_ID=null;FUNC_ID=null;FUNC_NOME=null;FUNC_ROLE=null;FUNC_PERMS={};pinDigitos='';mostrarTela('tela1Acesso');}}
 
 // PÁGINAS
-function irPg(pg,btn){document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));const el=$('pg-'+pg);if(el)el.classList.add('on');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');const fab=$('fab');if(fab)fab.style.display=pg==='produtos'?'flex':'none';const hb=$('helpBtn');if(hb)hb.style.display=['produtos','hist','config'].includes(pg)?'flex':'none';if(pg==='dash')renderDash();if(pg==='produtos'){renderProds();}if(pg==='hist')renderHist();if(pg==='insights')renderInsights();if(pg==='config'){if(FUNC_ROLE==='proprietario')carregarConfig();else toast('Acesso restrito','warn');}}
+let pgAtual='dash';
+function irPg(pg,btn){pgAtual=pg;document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));const el=$('pg-'+pg);if(el)el.classList.add('on');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');const fab=$('fab');if(fab)fab.style.display=(pg==='produtos'&&(FUNC_ROLE==='proprietario'||FUNC_PERMS.produtos))?'flex':'none';const hb=$('helpBtn');if(hb)hb.style.display=['dash','produtos','hist','insights','config'].includes(pg)?'flex':'none';if(pg==='dash')renderDash();if(pg==='produtos'){renderProds();}if(pg==='hist')renderHist();if(pg==='insights')renderInsights();if(pg==='config'){if(FUNC_ROLE==='proprietario')carregarConfig();else toast('Acesso restrito','warn');}}
 
 // PRODUTOS
 async function carregarProds(){try{todosProds=await sb(`ge_produtos?restaurante_id=eq.${REST_ID}&select=*&order=nome.asc`);}catch(e){todosProds=[];toast('Erro ao carregar produtos','err');}}
@@ -725,6 +809,7 @@ function renderCatPills(){const el=$('catPills');if(!el)return;const cats=[...ne
 function filtroCat(cat,btn){document.querySelectorAll('#catPills .cat').forEach(b=>b.classList.remove('on'));btn&&btn.classList.add('on');renderProds();}
 
 function abrirProd(id){
+  if(FUNC_ROLE!=='proprietario'&&!FUNC_PERMS.produtos)return toast('Sem permissão para cadastrar produtos','warn');
   prodAtual=id?(todosProds.find(p=>p.id===id)||null):null;
   const p=prodAtual;
   $('mpTit').textContent=p?'Editar Produto':'Novo Produto';
@@ -741,6 +826,8 @@ function abrirProd(id){
   $('mpCusto').value=p?(p.preco_custo||0):0;
   $('mpFab').value=p?(p.data_fabricacao||''):'';
   $('mpVal').value=p?(p.data_validade||''):'';
+  const fornSel=$('mpFornec');
+  if(fornSel){fornSel.innerHTML='<option value="">Sem fornecedor vinculado</option>'+todosFornecs.map(f=>`<option value="${f.id}" ${p&&p.fornecedor_id===f.id?'selected':''}>${f.nome}</option>`).join('');}
   // Botão emoji do produto
   if(!$('mpEmojiBtn')){
     const nf=$('mpNome');
@@ -792,18 +879,27 @@ function abrirProd(id){
   }
   abrirModal('ovProd');
 }
-async function salvarProd(){const nome=$('mpNome').value.trim();if(!nome)return toast('Nome obrigatório','err');const dados={restaurante_id:REST_ID,nome,categoria:$('mpCat').value||null,emoji:($('mpEmoji')&&$('mpEmoji').value)||($('mpEmojiBtn')&&$('mpEmojiBtn').textContent)||'📦',unidade:$('mpUnit').value||'un',quantidade:parseFloat($('mpQty').value)||0,estoque_minimo:parseFloat($('mpMin').value)||0,preco_custo:parseFloat($('mpCusto').value)||0,data_fabricacao:$('mpFab').value||null,data_validade:$('mpVal').value||null,atualizado_por:FUNC_ID,atualizado_em:new Date().toISOString()};try{const id=$('mpId').value;if(id)await sb(`ge_produtos?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(dados)});else await sb('ge_produtos',{method:'POST',body:JSON.stringify(dados)});toast(id?'✅ Produto atualizado!':'✅ Produto criado!');fM('ovProd');await carregarProds();renderProds();}catch(e){toast('Erro: '+JSON.stringify(e),'err');}}
+async function salvarProd(){const nome=$('mpNome').value.trim();if(!nome)return toast('Nome obrigatório','err');const dados={restaurante_id:REST_ID,nome,categoria:$('mpCat').value||null,emoji:($('mpEmoji')&&$('mpEmoji').value)||($('mpEmojiBtn')&&$('mpEmojiBtn').textContent)||'📦',unidade:$('mpUnit').value||'un',quantidade:parseFloat($('mpQty').value)||0,estoque_minimo:parseFloat($('mpMin').value)||0,preco_custo:parseFloat($('mpCusto').value)||0,data_fabricacao:$('mpFab').value||null,data_validade:$('mpVal').value||null,fornecedor_id:$('mpFornec').value||null,atualizado_por:FUNC_ID,atualizado_em:new Date().toISOString()};try{const id=$('mpId').value;if(id)await sb(`ge_produtos?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(dados)});else await sb('ge_produtos',{method:'POST',body:JSON.stringify(dados)});toast(id?'✅ Produto atualizado!':'✅ Produto criado!');fM('ovProd');await carregarProds();renderProds();}catch(e){toast('Erro: '+JSON.stringify(e),'err');}}
 async function excluirProd(){if(!confirm('Excluir produto?'))return;try{await sb(`ge_produtos?id=eq.${$('mpId').value}`,{method:'DELETE'});toast('Produto removido');fM('ovProd');await carregarProds();renderProds();}catch(e){toast('Erro ao excluir','err');}}
 
 // MOVIMENTOS
-function abrirMov(tipo){movQty=1;subtipoSaida='normal';$('mmTit').textContent=tipo==='entrada'?'📥 Registrar Entrada':'📤 Registrar Saída';$('mmSub').textContent=tipo==='entrada'?'Compra, recebimento ou ajuste':'Consumo, venda, perda ou vencimento';$('mmTipo').value=tipo;$('mmStWrap').style.display=tipo==='saida'?'block':'none';$('mmEstBox').style.display='none';$('qpV').textContent='1';$('mmObs').value='';const sel=$('mmProd');sel.innerHTML='<option value="">Selecione um produto...</option>'+todosProds.map(p=>`<option value="${p.id}">${p.emoji||'📦'} ${p.nome} (${fmtN(p.quantidade||0)} ${p.unidade||'un'})</option>`).join('');['N','P','V','A'].forEach(l=>{const b=$('tb'+l);if(b)b.classList.remove('on');});$('tbN')&&$('tbN').classList.add('on');abrirModal('ovMov');}
+function abrirMov(tipo){movQty=1;subtipoSaida='normal';$('mmTit').textContent=tipo==='entrada'?'📥 Registrar Entrada':'📤 Registrar Saída';$('mmSub').textContent=tipo==='entrada'?'Compra, recebimento ou ajuste':'Consumo, venda, perda ou vencimento';$('mmTipo').value=tipo;$('mmStWrap').style.display=tipo==='saida'?'block':'none';$('mmEstBox').style.display='none';movQty=1;const qv=$('qpV');if(qv)qv.value=1;$('mmObs').value='';const sel=$('mmProd');sel.innerHTML='<option value="">Selecione um produto...</option>'+todosProds.map(p=>`<option value="${p.id}">${p.emoji||'📦'} ${p.nome} (${fmtN(p.quantidade||0)} ${p.unidade||'un'})</option>`).join('');['N','P','V','A'].forEach(l=>{const b=$('tb'+l);if(b)b.classList.remove('on');});$('tbN')&&$('tbN').classList.add('on');abrirModal('ovMov');}
 function setSt(sub){subtipoSaida=sub;['N','P','V','A'].forEach(l=>{const b=$('tb'+l);if(b)b.classList.remove('on');});const map={normal:'N',perda:'P',vencimento:'V',ajuste:'A'};const btn=$('tb'+map[sub]);if(btn)btn.classList.add('on');}
-function updEst(){const id=$('mmProd').value;const p=todosProds.find(x=>x.id===id);$('mmEstBox').style.display=p?'block':'none';if(p){$('mmEstV').textContent=fmtN(p.quantidade||0)+' '+(p.unidade||'un');$('mmEstV').style.color=(p.quantidade||0)<=(p.estoque_minimo||0)?'var(--rd)':'var(--gn)';}}
-function ajQ(d){movQty=Math.max(0.01,parseFloat((movQty+d).toFixed(3)));$('qpV').textContent=fmtN(movQty);const id=$('mmProd').value;const p=todosProds.find(x=>x.id===id);if(p){const tipo=$('mmTipo').value;const prev=tipo==='entrada'?(p.quantidade||0)+movQty:Math.max(0,(p.quantidade||0)-movQty);$('mmPrevEl').textContent=`→ Ficará: ${fmtN(prev)} ${p.unidade||'un'}`;}}
+function updEst(){const id=$('mmProd').value;const p=todosProds.find(x=>x.id===id);$('mmEstBox').style.display=p?'block':'none';if(p){$('mmEstV').textContent=fmtN(p.quantidade||0)+' '+(p.unidade||'un');$('mmEstV').style.color=(p.quantidade||0)<=(p.estoque_minimo||0)?'var(--rd)':'var(--gn)';updPrev();}}
+function ajQ(d){
+  movQty=Math.max(0,movQty+d);
+  const el=$('qpV');if(el)el.value=movQty;
+  updPrev();
+}
+function updPrev(){
+  const id=$('mmProd').value;const p=todosProds.find(x=>x.id===id);
+  if(p){const tipo=$('mmTipo').value;const prev=tipo==='entrada'?(p.quantidade||0)+movQty:Math.max(0,(p.quantidade||0)-movQty);
+  $('mmPrevEl').textContent=`→ Ficará: ${prev % 1 === 0 ? prev : prev.toFixed(2)} ${p.unidade||'un'}`;}
+}
 async function registrarMov(){const pid=$('mmProd').value;const tipo=$('mmTipo').value;if(!pid)return toast('Selecione um produto','err');const p=todosProds.find(x=>x.id===pid);if(!p)return;const qtdAntes=p.quantidade||0;const novaQtd=tipo==='entrada'?qtdAntes+movQty:Math.max(0,qtdAntes-movQty);try{await sb(`ge_produtos?id=eq.${pid}`,{method:'PATCH',body:JSON.stringify({quantidade:novaQtd,atualizado_por:FUNC_ID,atualizado_em:new Date().toISOString()})});await sb('ge_movimentacoes',{method:'POST',body:JSON.stringify({restaurante_id:REST_ID,produto_id:pid,tipo,subtipo:tipo==='saida'?subtipoSaida:null,quantidade:movQty,quantidade_anterior:qtdAntes,quantidade_nova:novaQtd,funcionario_id:FUNC_ID,funcionario_nome:FUNC_NOME,observacao:$('mmObs').value||null})});toast(`✅ ${tipo==='entrada'?'Entrada':'Saída'} registrada!`);fM('ovMov');p.quantidade=novaQtd;renderDash();}catch(e){toast('Erro: '+e.message,'err');}}
 
 // DASHBOARD
-function renderDash(){const h=new Date().getHours();const saud=h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';$('dGreet')&&($('dGreet').textContent=saud+' '+(FUNC_NOME||'').split(' ')[0]+' 👋');$('dDate')&&($('dDate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}));$('stTot')&&($('stTot').textContent=todosProds.length);const baixos=todosProds.filter(p=>(p.quantidade||0)<=(p.estoque_minimo||0)&&(p.estoque_minimo||0)>0);const criticos=todosProds.filter(p=>(p.quantidade||0)===0&&(p.estoque_minimo||0)>0);$('stBx')&&($('stBx').textContent=baixos.length);$('stCr')&&($('stCr').textContent=criticos.length);const badge=$('alertBadge');if(badge){$('alertCnt').textContent=baixos.length;badge.style.display=baixos.length?'flex':'none';}if(FUNC_ROLE==='proprietario'){const total=todosProds.reduce((a,p)=>a+(p.preco_custo||0)*(p.quantidade||0),0);const vb=$('veBox');if(vb)vb.style.display='flex';$('veVal')&&($('veVal').textContent=fmt(total));}const secA=$('secA'),dAlerts=$('dAlerts');if(dAlerts){if(baixos.length){secA&&(secA.style.display='block');dAlerts.innerHTML=baixos.slice(0,5).map(p=>`<div class="alert-c ${(p.quantidade||0)===0?'a-rd':'a-am'}"><div class="a-ico">${p.emoji||'📦'}</div><div class="a-info"><div class="a-nome">${p.nome}</div><div class="a-qty">${fmtN(p.quantidade||0)} ${p.unidade||'un'} · Mín: ${fmtN(p.estoque_minimo||0)}</div></div><button class="a-btn" onclick="abrirMov('entrada')">+ Repor</button></div>`).join('');}else{secA&&(secA.style.display='none');dAlerts.innerHTML='';}}const vencendo=todosProds.filter(p=>{const d=diasParaVencer(p.data_validade);return d!==null&&d>=0&&d<=30;});const secV=$('secV'),dValid=$('dValid');if(dValid){if(vencendo.length){secV&&(secV.style.display='block');dValid.innerHTML=vencendo.map(p=>{const sv=labelVal(p);return`<div class="alert-c a-cy"><div class="a-ico">${p.emoji||'📦'}</div><div class="a-info"><div class="a-nome">${p.nome}</div><div class="a-qty" style="color:${sv.cls==='venc'?'var(--rd)':'var(--am)'}">${sv.ico} ${sv.txt}</div></div></div>`;}).join('');}else{secV&&(secV.style.display='none');dValid.innerHTML='';}}renderMovsRecentes();}
+function renderDash(){const h=new Date().getHours();const saud=h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';$('dGreet')&&($('dGreet').textContent=saud+' '+(FUNC_NOME||'').split(' ')[0]+' 👋');$('dDate')&&($('dDate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}));$('stTot')&&($('stTot').textContent=todosProds.length);const baixos=todosProds.filter(p=>(p.quantidade||0)<=(p.estoque_minimo||0)&&(p.estoque_minimo||0)>0);const criticos=todosProds.filter(p=>(p.quantidade||0)===0&&(p.estoque_minimo||0)>0);$('stBx')&&($('stBx').textContent=baixos.length);$('stCr')&&($('stCr').textContent=criticos.length);const badge=$('alertBadge');if(badge){$('alertCnt').textContent=baixos.length;badge.style.display=baixos.length?'flex':'none';}if(FUNC_ROLE==='proprietario'||(FUNC_PERMS&&FUNC_PERMS.valor)){const total=todosProds.reduce((a,p)=>a+(p.preco_custo||0)*(p.quantidade||0),0);const vb=$('veBox');if(vb)vb.style.display='flex';$('veVal')&&($('veVal').textContent=fmt(total));}else{const vb=$('veBox');if(vb)vb.style.display='none';}const secA=$('secA'),dAlerts=$('dAlerts');if(dAlerts){if(baixos.length){secA&&(secA.style.display='block');dAlerts.innerHTML=baixos.slice(0,5).map(p=>`<div class="alert-c ${(p.quantidade||0)===0?'a-rd':'a-am'}"><div class="a-ico">${p.emoji||'📦'}</div><div class="a-info"><div class="a-nome">${p.nome}</div><div class="a-qty">${fmtN(p.quantidade||0)} ${p.unidade||'un'} · Mín: ${fmtN(p.estoque_minimo||0)}</div></div><button class="a-btn" onclick="abrirMov('entrada')">+ Repor</button></div>`).join('');}else{secA&&(secA.style.display='none');dAlerts.innerHTML='';}}const vencendo=todosProds.filter(p=>{const d=diasParaVencer(p.data_validade);return d!==null&&d>=0&&d<=30;});const secV=$('secV'),dValid=$('dValid');if(dValid){if(vencendo.length){secV&&(secV.style.display='block');dValid.innerHTML=vencendo.map(p=>{const sv=labelVal(p);return`<div class="alert-c a-cy"><div class="a-ico">${p.emoji||'📦'}</div><div class="a-info"><div class="a-nome">${p.nome}</div><div class="a-qty" style="color:${sv.cls==='venc'?'var(--rd)':'var(--am)'}">${sv.ico} ${sv.txt}</div></div></div>`;}).join('');}else{secV&&(secV.style.display='none');dValid.innerHTML='';}}renderMovsRecentes();}
 async function renderMovsRecentes(){const el=$('dMovs');if(!el)return;try{const movs=await sb(`ge_movimentacoes?restaurante_id=eq.${REST_ID}&select=*&order=created_at.desc&limit=8`);if(!movs.length){el.innerHTML='<div style="padding:20px;text-align:center;color:var(--t3);font-size:12px;">Nenhum movimento ainda</div>';return;}el.innerHTML=movs.map(m=>{const dt=new Date(m.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});const cor=m.tipo==='entrada'?'var(--gn)':'var(--rd)';const prod=todosProds.find(p=>p.id===m.produto_id);return`<div class="mov-c"><div class="mov-dot" style="background:${cor}"></div><div class="mov-inf"><div class="mov-n">${prod?prod.nome:'Produto'}</div><div class="mov-d">${m.funcionario_nome||''} ${m.observacao?'· '+m.observacao:''}</div></div><div class="mov-r"><div class="mov-q" style="color:${cor}">${m.tipo==='entrada'?'+':'-'}${fmtN(m.quantidade)}</div><div class="mov-t">${dt}</div></div></div>`;}).join('');}catch(e){el.innerHTML='<div style="padding:20px;text-align:center;color:var(--t3);font-size:12px;">Nenhum movimento ainda</div>';}}
 
 // HISTÓRICO
@@ -842,11 +938,21 @@ async function renderInsights(){
   }}
 
 // FUNCIONÁRIOS
+function liberarTudo(){['permHist','permInsights','permProdutos','permValor','permEstornar'].forEach(id=>{const el=$(id);if(el)el.checked=true;});}
 async function carregarFuncs(){try{todosFuncs=await sb(`ge_funcionarios?restaurante_id=eq.${REST_ID}&select=*&order=nome.asc`);}catch(e){todosFuncs=[];}}
-function renderFuncs(){const el=$('listaFuncs');if(!el)return;if(!todosFuncs.length){el.innerHTML='<div style="padding:14px;text-align:center;color:var(--t3);font-size:12px;">Nenhum funcionário cadastrado</div>';return;}el.innerHTML=todosFuncs.map(f=>`<div class="f-c" onclick="abrirFunc('${f.id}')"><div style="font-size:22px;width:36px;height:36px;border-radius:50%;background:var(--gn2);display:flex;align-items:center;justify-content:center;">${f.nome[0]||'?'}</div><div class="f-inf"><div class="f-n">${f.nome}</div><div class="f-s">PIN: ••••</div></div><div style="color:var(--t3);">›</div></div>`).join('');}
-function abrirNovoFunc(){funcAtual=null;$('mfTit').textContent='Novo Funcionário';$('mfId').value='';$('mfNome').value='';$('mfPin').value='';$('mfExc').style.display='none';abrirModal('ovFunc');}
-function abrirFunc(id){funcAtual=todosFuncs.find(f=>f.id===id)||null;const f=funcAtual;$('mfTit').textContent='Editar Funcionário';$('mfId').value=f?f.id:'';$('mfNome').value=f?f.nome:'';$('mfPin').value='';$('mfExc').style.display='block';abrirModal('ovFunc');}
-async function salvarFunc(){const nome=$('mfNome').value.trim();const pin=$('mfPin').value;if(!nome)return toast('Nome obrigatório','err');if(!funcAtual&&(!pin||pin.length!==4||isNaN(pin)))return toast('PIN deve ter 4 números','err');const dados={restaurante_id:REST_ID,nome,...(pin?{pin}:{})};try{const id=$('mfId').value;if(id)await sb(`ge_funcionarios?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(dados)});else await sb('ge_funcionarios',{method:'POST',body:JSON.stringify(dados)});toast(id?'✅ Funcionário atualizado!':'✅ Funcionário criado!');fM('ovFunc');await carregarFuncs();renderFuncs();}catch(e){toast('Erro: '+JSON.stringify(e),'err');}}
+function renderFuncs(){const el=$('listaFuncs');if(!el)return;if(!todosFuncs.length){el.innerHTML='<div style="padding:14px;text-align:center;color:var(--t3);font-size:12px;">Nenhum funcionário cadastrado</div>';return;}el.innerHTML=todosFuncs.map(f=>`<div class="f-c" onclick="abrirFunc('${f.id}')"><div style="font-size:22px;width:36px;height:36px;border-radius:50%;background:var(--gn2);display:flex;align-items:center;justify-content:center;">${f.nome[0]||'?'}</div><div class="f-inf"><div class="f-n">${f.nome}</div><div class="f-s">Funcionário(a) · PIN: ••••</div></div><div style="color:var(--t3);">›</div></div>`).join('');}
+function abrirNovoFunc(){funcAtual=null;$('mfTit').textContent='Novo Funcionário';$('mfId').value='';$('mfNome').value='';$('mfPin').value='';$('mfExc').style.display='none';$('mfPerms').style.display='none';abrirModal('ovFunc');}
+function abrirFunc(id){funcAtual=todosFuncs.find(f=>f.id===id)||null;const f=funcAtual;
+  $('mfTit').textContent='Editar Funcionário';$('mfId').value=f?f.id:'';$('mfNome').value=f?f.nome:'';$('mfPin').value='';$('mfExc').style.display='block';
+  $('mfPerms').style.display='block';
+  $('permHist').checked=f?.perm_historico||false;
+  $('permInsights').checked=f?.perm_insights||false;
+  $('permProdutos').checked=f?.perm_produtos||false;
+  $('permValor').checked=f?.perm_valor_estoque||false;
+  $('permEstornar').checked=f?.perm_estornar||false;
+  abrirModal('ovFunc');}
+async function salvarFunc(){const nome=$('mfNome').value.trim();const pin=$('mfPin').value;if(!nome)return toast('Nome obrigatório','err');if(!funcAtual&&(!pin||pin.length!==4||isNaN(pin)))return toast('PIN deve ter 4 números','err');const perms=funcAtual?{perm_historico:$('permHist').checked,perm_insights:$('permInsights').checked,perm_produtos:$('permProdutos').checked,perm_valor_estoque:$('permValor').checked,perm_estornar:$('permEstornar').checked}:{};
+  const dados={restaurante_id:REST_ID,nome,...(pin?{pin}:{}),...perms};try{const id=$('mfId').value;if(id)await sb(`ge_funcionarios?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(dados)});else await sb('ge_funcionarios',{method:'POST',body:JSON.stringify(dados)});toast(id?'✅ Funcionário atualizado!':'✅ Funcionário criado!');fM('ovFunc');await carregarFuncs();renderFuncs();}catch(e){toast('Erro: '+JSON.stringify(e),'err');}}
 async function excluirFunc(){if(!confirm('Remover funcionário?'))return;try{await sb(`ge_funcionarios?id=eq.${$('mfId').value}`,{method:'DELETE'});toast('Funcionário removido');fM('ovFunc');await carregarFuncs();renderFuncs();}catch(e){toast('Erro ao remover','err');}}
 
 // LINK DE ACESSO
@@ -864,11 +970,48 @@ async function addUnit(){const nome=$('novaUnit').value.trim().toLowerCase();if(
 async function excluirUnit(id){try{await sb(`ge_unidades?id=eq.${id}`,{method:'DELETE'});await carregarUnits();renderUnits();}catch(e){toast('Erro','err');}}
 
 // CONFIGURAÇÕES
-async function carregarConfig(){try{const r=await sb(`ge_restaurantes?id=eq.${REST_ID}&select=*`);const rest=r[0];if(!rest)return;$('cfgNome')&&($('cfgNome').value=rest.nome||'');$('cfgTipo')&&($('cfgTipo').value=rest.tipo_negocio||'');const wpp=(rest.whatsapp||'').replace(/^55/,'');const wEl=$('cfgWpp');if(wEl){wEl.value=wpp;maskWpp(wEl);}const cod=rest.codigo_acesso||'------';const link=`${window.location.origin}${window.location.pathname}?cod=${cod}`;$('linkFuncEl')&&($('linkFuncEl').textContent=link);$('codVal')&&($('codVal').textContent=cod);renderFuncs();renderCats();renderUnits();}catch(e){toast('Erro ao carregar config','err');}}
+async function carregarConfig(){try{const r=await sb(`ge_restaurantes?id=eq.${REST_ID}&select=*`);const rest=r[0];if(!rest)return;$('cfgNome')&&($('cfgNome').value=rest.nome||'');$('cfgTipo')&&($('cfgTipo').value=rest.tipo_negocio||'');const wpp=(rest.whatsapp||'').replace(/^55/,'');const wEl=$('cfgWpp');if(wEl){wEl.value=wpp;maskWpp(wEl);}const cod=rest.codigo_acesso||'------';const link=`${window.location.origin}${window.location.pathname}?cod=${cod}`;$('linkFuncEl')&&($('linkFuncEl').textContent=link);$('codVal')&&($('codVal').textContent=cod);renderFuncs();renderFornecs();renderCats();renderUnits();}catch(e){toast('Erro ao carregar config','err');}}
 async function salvarIdent(){const nome=$('cfgNome').value.trim();const tipo=$('cfgTipo').value.trim();if(!nome)return toast('Nome obrigatório','err');const wppRaw=($('cfgWpp').value||'').replace(/\D/g,'');try{await sb(`ge_restaurantes?id=eq.${REST_ID}`,{method:'PATCH',body:JSON.stringify({nome:nome,tipo_negocio:tipo,whatsapp:wppRaw?'55'+wppRaw:null})});REST_NOME=nome;toast('✅ Dados salvos!');$('topNome').textContent=nome;}catch(e){toast('Erro ao salvar','err');}}
 
 // LISTA DE COMPRAS
-async function enviarListaCompras(){const r=await sb(`ge_restaurantes?id=eq.${REST_ID}&select=whatsapp,nome`).catch(()=>null);const wpp=(r&&r[0]&&r[0].whatsapp)||'';if(!wpp)return toast('Configure o WhatsApp nas configurações','warn');const baixos=todosProds.filter(p=>(p.quantidade||0)<=(p.estoque_minimo||0)&&(p.estoque_minimo||0)>0);if(!baixos.length)return toast('Nenhum produto com estoque baixo','info');const linhas=baixos.map(p=>`• ${p.emoji||'📦'} ${p.nome}: ${fmtN(p.quantidade||0)} ${p.unidade||'un'} (mín: ${fmtN(p.estoque_minimo||0)})`).join('\n');const msg=encodeURIComponent(`🛒 *Lista de Compras — ${new Date().toLocaleDateString('pt-BR')}*\n\n${linhas}\n\n_Gerencion Estoque v3.1_`);window.open(`https://wa.me/${wpp}?text=${msg}`,'_blank');}
+// ===== FORNECEDORES =====
+async function carregarFornecs(){try{todosFornecs=await sb(`ge_fornecedores?restaurante_id=eq.${REST_ID}&select=*&order=nome.asc`);}catch(e){todosFornecs=[];}}
+function renderFornecs(){
+  const el=$('listaFornec');if(!el)return;
+  if(!todosFornecs.length){el.innerHTML='<div style="padding:14px;text-align:center;color:var(--t3);font-size:12px;">Nenhum fornecedor cadastrado</div>';return;}
+  el.innerHTML=todosFornecs.map(f=>`<div class="f-c" onclick="abrirFornec('${f.id}')"><div style="font-size:22px;width:36px;height:36px;border-radius:50%;background:var(--bl2);display:flex;align-items:center;justify-content:center;">🚚</div><div class="f-inf"><div class="f-n">${f.nome}</div><div class="f-s">${f.whatsapp?'📱 '+f.whatsapp:'Sem WhatsApp'}</div></div><div style="color:var(--t3);">›</div></div>`).join('');
+}
+function abrirNovoFornec(){$('mfnTit').textContent='Novo Fornecedor';$('mfnId').value='';$('mfnNome').value='';$('mfnWpp').value='';$('mfnExc').style.display='none';abrirModal('ovFornec');}
+function abrirFornec(id){const f=todosFornecs.find(x=>x.id===id);if(!f)return;$('mfnTit').textContent='Editar Fornecedor';$('mfnId').value=f.id;$('mfnNome').value=f.nome;$('mfnWpp').value=(f.whatsapp||'').replace(/^55/,'');maskWpp($('mfnWpp'));$('mfnExc').style.display='block';abrirModal('ovFornec');}
+async function salvarFornec(){const nome=$('mfnNome').value.trim();if(!nome)return toast('Nome obrigatório','err');const wppRaw=($('mfnWpp').value||'').replace(/\D/g,'');const dados={restaurante_id:REST_ID,nome,whatsapp:wppRaw?'55'+wppRaw:null};try{const id=$('mfnId').value;if(id)await sb(`ge_fornecedores?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({nome,whatsapp:wppRaw?'55'+wppRaw:null})});else await sb('ge_fornecedores',{method:'POST',body:JSON.stringify(dados)});toast('✅ Fornecedor salvo!');fM('ovFornec');await carregarFornecs();renderFornecs();}catch(e){toast('Erro: '+JSON.stringify(e),'err');}}
+async function excluirFornec(){if(!confirm('Remover fornecedor?'))return;try{await sb(`ge_fornecedores?id=eq.${$('mfnId').value}`,{method:'DELETE'});toast('Fornecedor removido');fM('ovFornec');await carregarFornecs();renderFornecs();}catch(e){toast('Erro','err');}}
+
+async function enviarListaCompras(){
+  const baixos=todosProds.filter(p=>(p.quantidade||0)<=(p.estoque_minimo||0)&&(p.estoque_minimo||0)>0);
+  if(!baixos.length)return toast('Nenhum produto com estoque baixo','info');
+  const data=new Date().toLocaleDateString('pt-BR');
+  // Agrupar por fornecedor
+  const grupos={};
+  baixos.forEach(p=>{
+    const fid=p.fornecedor_id||'__geral__';
+    if(!grupos[fid])grupos[fid]=[];
+    grupos[fid].push(p);
+  });
+  let enviados=0;
+  for(const [fid,prods] of Object.entries(grupos)){
+    const fornec=todosFornecs.find(f=>f.id===fid);
+    const wpp=fornec?.whatsapp||'';
+    const linhas=prods.map(p=>`• ${p.emoji||'📦'} ${p.nome}: ${numFmt(p.quantidade||0)} ${p.unidade||'un'} (mín: ${numFmt(p.estoque_minimo||0)})`).join('\n');
+    const dest=fornec?fornec.nome:'Lista Geral';
+    const msg=encodeURIComponent(`🛒 *Lista de Compras — ${dest}*\n${data}\n\n${linhas}\n\n_Gerencion Estoque v3.1_`);
+    if(wpp){window.open(`https://wa.me/${wpp}?text=${msg}`,'_blank');enviados++;}
+    else{// Sem WhatsApp — perguntar para onde enviar
+      const num=prompt(`Fornecedor "${dest}" sem WhatsApp cadastrado.\nDigite o número (55+DDD+número) ou cancele:`);
+      if(num){window.open(`https://wa.me/${num.replace(/\D/g,'')}?text=${msg}`,'_blank');enviados++;}
+    }
+  }
+  if(enviados>0)toast(`✅ ${enviados} lista${enviados>1?'s':''} enviada${enviados>1?'s':''}!`);
+}
 
 // RELATÓRIOS
 function relWpp(){const raw=($('cfgWpp').value||'').replace(/\D/g,'');if(!raw)return toast('Configure o WhatsApp','warn');const linhas=todosProds.map(p=>`${p.emoji||'📦'} ${p.nome}: ${fmtN(p.quantidade||0)} ${p.unidade||'un'}`).join('\n');const msg=encodeURIComponent(`📦 *Relatório de Estoque*\n${new Date().toLocaleDateString('pt-BR')}\n\n${linhas}`);window.open(`https://wa.me/55${raw}?text=${msg}`,'_blank');}
@@ -878,11 +1021,89 @@ function relCSV(){if(!todosProds.length)return toast('Sem produtos','warn');cons
 async function limparHist(){if(!confirm('Limpar todo o histórico?'))return;try{await sb(`ge_movimentacoes?restaurante_id=eq.${REST_ID}`,{method:'DELETE'});toast('✅ Histórico limpo!');}catch(e){toast('Erro','err');}}
 
 // AJUDA
-function abrirAjuda(){$('helpTi').textContent='❓ Como usar';$('helpCnt').innerHTML=`<div class="help-it"><div class="help-ic">📦</div><div><div class="help-nt">Cadastrar Produtos</div><div class="help-ns">Toque no <strong>+</strong> para adicionar. Use emojis para identificar visualmente. Defina estoque mínimo para alertas.</div></div></div><div class="help-it"><div class="help-ic">📅</div><div><div class="help-nt">Fabricação + Validade</div><div class="help-ns">Informe ambas as datas para evitar alertas falsos. O status aparece em tempo real no modal.</div></div></div><div class="help-it"><div class="help-ic">📥</div><div><div class="help-nt">Entradas e Saídas</div><div class="help-ns">Use os botões rápidos no Início. Classifique saídas como perda ou vencimento para relatórios precisos.</div></div></div><div class="help-it"><div class="help-ic">🔗</div><div><div class="help-nt">Link para Funcionários</div><div class="help-ns">Em Config → envie o link pelo WhatsApp. O funcionário abre, cria o PIN e instala o app automaticamente.</div></div></div>`;abrirModal('ovHelp');}
+function hi(ico,t,s){return`<div class="help-it"><div class="help-ic">${ico}</div><div><div class="help-nt">${t}</div><div class="help-ns">${s}</div></div></div>`;}
+const TUTORIAIS={
+  dash:[
+    hi('🏠','Tela Inicial — Visão Geral','Aqui você vê um resumo completo do estoque. Os 3 números mostram: total de produtos, quantos estão com estoque <strong>baixo</strong> (amarelo) e <strong>crítico</strong> (vermelho). Toque em qualquer número para ir à lista de produtos.'),
+    hi('💰','Valor do Estoque','Mostra o valor total investido em estoque, calculado automaticamente (custo × quantidade). Para funcionar, cadastre o custo unitário de cada produto.'),
+    hi('📤','Registrar Saída','Toque aqui quando consumir, vender ou perder um produto. Selecione o produto, a quantidade e o tipo: consumo normal, perda/desperdício, produto vencido ou ajuste de estoque.'),
+    hi('📥','Registrar Entrada','Toque aqui quando receber mercadoria ou fazer compra. Selecione o produto e a quantidade recebida. O estoque sobe automaticamente.'),
+    hi('⚠️','Alertas Automáticos','Quando um produto fica abaixo do mínimo aparece aqui com alerta vermelho ou amarelo. Toque em <strong>+ Repor</strong> para registrar entrada na hora.'),
+    hi('📅','Alertas de Validade','Produtos vencendo em até 30 dias aparecem na tela inicial. <strong>Vence HOJE</strong> = amarelo. <strong>VENCIDO</strong> = vermelho. Configure as datas no cadastro do produto.'),
+  ],
+  produtos:[
+    hi('+','Como Cadastrar um Produto','Toque no botão verde <strong>+</strong> no canto inferior direito. Preencha: nome, categoria, unidade (cx, kg, un...), quantidade atual e <strong>estoque mínimo</strong> — abaixo disso o sistema alerta.'),
+    hi('🏷️','Emoji do Produto','Toque no botão de emoji ao lado do nome para escolher um ícone. São mais de <strong>1.900 emojis comerciais</strong> organizados por categoria: alimentos, bebidas, automotivo, pet shop e muito mais.'),
+    hi('🚚','Vincular Fornecedor','Campo opcional no modal do produto. Selecione o fornecedor que vende aquele produto. Quando enviar a lista de compras, cada fornecedor receberá <strong>somente os seus produtos</strong>.'),
+    hi('📅','Fabricação + Validade','Preencha ambas as datas para evitar alertas falsos. Com data de fabricação o sistema sabe que o produto é novo. Status aparece em tempo real: ✅ Válido, ⚠️ Vence em Xd, 🔴 VENCIDO.'),
+    hi('💰','Custo Unitário','Quanto custa cada unidade? O sistema multiplica pelo estoque e mostra o <strong>valor total investido</strong> no dashboard. Muito útil para saber o capital parado em estoque.'),
+    hi('⏱️','Previsão de Acabar','O sistema analisa as saídas dos últimos 30 dias e calcula em quantos dias o produto vai acabar. Aparece em <strong>vermelho</strong> (urgente) ou <strong>amarelo</strong> (atenção) em cada produto.'),
+    hi('🔍','Busca e Filtros','Use a barra de busca para encontrar produtos pelo nome. Use os botões de categoria para filtrar por tipo. Produtos críticos aparecem sempre primeiro na lista.'),
+  ],
+  hist:[
+    hi('📋','O que é o Histórico','Aqui ficam registrados todos os movimentos: entradas, saídas, perdas e vencimentos. Cada registro mostra o produto, quem fez, quando e a observação.'),
+    hi('🔍','Busca e Filtros','Use a barra de busca para filtrar por produto, funcionário ou observação. Use os botões no topo para ver só <strong>Entradas</strong>, <strong>Saídas</strong> ou <strong>Perdas</strong>.'),
+    hi('📥','Entradas (verde)','Cada registro verde é uma entrada de mercadoria. Mostra o produto, quem registrou, a quantidade e o horário.'),
+    hi('📤','Saídas (vermelho)','Cada registro vermelho é uma saída: consumo, venda ou ajuste. Inclui quem fez e qualquer observação adicionada.'),
+    hi('⚠️','Perdas e Vencimentos (amarelo)','Saídas classificadas como perda ou produto vencido aparecem em amarelo. Use para acompanhar desperdícios e tomar ação.'),
+  ],
+  insights:[
+    hi('📊','Resumo do Mês','Mostra entradas, saídas e perdas do mês atual. Compare os números e identifique tendências no seu negócio.'),
+    hi('📈','Comparativo por Categoria','Barras mostram o consumo de cada categoria. Quanto maior a barra, mais saiu naquele período. Ótimo para planejar compras.'),
+    hi('⚠️','Relatório de Perdas','Lista todas as perdas e vencimentos do mês com quantidade. Use para identificar o que mais desperdiça e tomar ação.'),
+    hi('🛒','Lista de Compras Automática','O sistema identifica todos os produtos abaixo do mínimo e monta a lista. Ao clicar <strong>Enviar ao Fornecedor</strong>, cada fornecedor recebe <strong>somente os seus produtos</strong> pelo WhatsApp. Produtos sem fornecedor: o sistema pede o número na hora.'),
+  ],
+  config:[
+    hi('🔗','Link para Funcionários','Envie o link pelo WhatsApp. O funcionário abre no celular, o sistema já reconhece o estabelecimento. Ele cria o PIN e instala. Muito mais fácil que digitar código.'),
+    hi('👥','Cadastrar Funcionários','Toque em <strong>+ Adicionar Funcionário</strong>. Coloque o nome e crie um PIN de 4 dígitos para ele. Todos os registros ficam identificados com o nome de quem fez.'),
+    hi('🚚','Cadastrar Fornecedores — PASSO A PASSO','<strong>1.</strong> Toque em <strong>+ Adicionar Fornecedor</strong><br><strong>2.</strong> Digite o nome do fornecedor<br><strong>3.</strong> Digite o WhatsApp com DDD (ex: 21 99999-1111)<br><strong>4.</strong> Salve<br><strong>5.</strong> Vá em Produtos → edite cada produto → escolha o fornecedor no campo <strong>Fornecedor</strong><br><strong>6.</strong> Agora em Insights → Lista de Compras → cada fornecedor recebe só os seus produtos!'),
+    hi('🏪','Identidade do Estabelecimento','Coloque o nome do estabelecimento e o tipo de negócio. Faça upload da logo (recomendado: <strong>400×400 pixels</strong>, quadrado). A logo aparece no topo para todos os usuários.'),
+    hi('🏷️','Categorias de Produtos','Crie as categorias do seu negócio. Toque no emoji para escolher o ícone com mais de <strong>1.900 opções comerciais</strong>. Organize os produtos por tipo para facilitar a busca e os relatórios.'),
+    hi('📏','Unidades de Medida','Além das padrão (kg, g, l, ml, cx...), adicione unidades específicas do seu negócio: porção, bandeja, ampola, fardo, etc.'),
+    hi('📊','Relatórios','Envie por <strong>WhatsApp</strong> ou <strong>E-mail</strong>. Baixe em <strong>PDF</strong> (abra no navegador e imprima) ou <strong>CSV</strong> para Excel. Inclui todos os produtos com estoque, custo e valor total.'),
+  ],
+};
+function abrirAjuda(){
+  const pg=pgAtual||'dash';
+  const itens=TUTORIAIS[pg]||TUTORIAIS['dash'];
+  const titulos={dash:'🏠 Início',produtos:'📦 Produtos',hist:'📋 Histórico',insights:'📊 Insights',config:'⚙️ Configurações'};
+  $('helpTi').textContent='❓ '+( titulos[pg]||'Como usar');
+  $('helpCnt').innerHTML=itens.join('');
+  abrirModal('ovHelp');
+}
 
 // LOGO
-function previewLogo(){const file=$('logoFile')&&$('logoFile').files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{$('logoImg').src=e.target.result;$('logoImg').style.display='block';$('logoPh').style.display='none';};reader.readAsDataURL(file);}
-function removerLogo(){$('logoImg').style.display='none';$('logoPh').style.display='flex';$('logoFile').value='';}
+function previewLogo(){
+  const file=$('logoFile')&&$('logoFile').files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    // Redimensionar para 400x400 máximo antes de salvar
+    const img=new Image();
+    img.onload=()=>{
+      const canvas=document.createElement('canvas');
+      const max=400;
+      let w=img.width,h=img.height;
+      if(w>h){if(w>max){h=Math.round(h*max/w);w=max;}}else{if(h>max){w=Math.round(w*max/h);h=max;}}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      const data=canvas.toDataURL('image/jpeg',0.8);
+      // Mostrar na tela
+      $('logoImg').src=data;$('logoImg').style.display='block';$('logoPh').style.display='none';
+      // Mostrar no topbar
+      const ico=$('topIco');if(ico)ico.innerHTML='<img src="'+data+'" style="width:34px;height:34px;object-fit:cover;border-radius:8px;">';
+      // Salvar no localStorage
+      try{if(REST_ID)localStorage.setItem('ge_logo_'+REST_ID,data);}catch(err){toast('Imagem muito grande, use uma menor','warn');}
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function removerLogo(){
+  $('logoImg').style.display='none';$('logoPh').style.display='flex';$('logoFile').value='';
+  const ico=$('topIco');if(ico)ico.textContent='GE';
+  if(REST_ID)localStorage.removeItem('ge_logo_'+REST_ID);
+}
 
 // Fechar sugestões ao clicar fora
 document.addEventListener('click',e=>{['tipoSugsS','tipoSugsC'].forEach(id=>{const el=$(id);if(el&&el.style.display==='block'){const inp=el.previousElementSibling;if(inp&&!inp.contains(e.target)&&!el.contains(e.target))el.style.display='none';}});if($('emojiPicker')&&$('emojiPicker').style.display==='block'){const ep=$('emojiPicker');if(!ep.contains(e.target)&&e.target.id!=='emjBtn'&&e.target.id!=='mpEmojiBtn')ep.style.display='none';}});
@@ -897,7 +1118,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
     if(sessUid){
       try{
         if(sessUid==='PROP'){const r=await sb(`ge_restaurantes?id=eq.${REST_ID}&select=nome,nome_proprietario`);if(r.length){FUNC_NOME=r[0].nome_proprietario||r[0].nome;REST_NOME=r[0].nome;FUNC_ROLE='proprietario';await entrarApp();return;}}
-        else{const r=await sb(`ge_funcionarios?id=eq.${sessUid}&restaurante_id=eq.${REST_ID}&select=*`);if(r.length){FUNC_ID=r[0].id;FUNC_NOME=r[0].nome;const rr=await sb(`ge_restaurantes?id=eq.${REST_ID}&select=nome`);REST_NOME=rr.length?rr[0].nome:'';FUNC_ROLE='funcionario';await entrarApp();return;}}
+        else{const r=await sb(`ge_funcionarios?id=eq.${sessUid}&restaurante_id=eq.${REST_ID}&select=*`);if(r.length){FUNC_ID=r[0].id;FUNC_NOME=r[0].nome;FUNC_PERMS={historico:r[0].perm_historico,insights:r[0].perm_insights,produtos:r[0].perm_produtos,valor:r[0].perm_valor_estoque,estornar:r[0].perm_estornar};const rr=await sb(`ge_restaurantes?id=eq.${REST_ID}&select=nome`);REST_NOME=rr.length?rr[0].nome:'';FUNC_ROLE='funcionario';await entrarApp();return;}}
       }catch(e){limparSessao();}
     }
     try{
