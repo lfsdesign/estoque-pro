@@ -427,6 +427,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);font-siz
         <div class="cfg-s">Cadastre cada funcionário com nome e PIN único de 4 dígitos.</div>
         <div id="listaFuncs"></div>
         <button class="btn-c b-bl" onclick="abrirNovoFunc()" style="margin-top:7px;">+ Adicionar Funcionário</button>
+        <button class="btn-c b-am" onclick="abrirListaPins()" style="margin-top:7px;">🔐 Ver PINs dos Funcionários</button>
       </div>
       <div class="cfg-c">
         <div class="cfg-t">🏪 Identidade do Estabelecimento</div>
@@ -641,6 +642,38 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);font-siz
     <div id="mfExc" style="display:none;margin-top:8px;">
       <button class="mb-d" onclick="excluirFunc()" style="width:100%">🗑️ Remover Funcionário</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL LISTA PINS -->
+<div class="overlay" id="ovPins">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mh"></div>
+    <div class="mt">🔐 Confirmar Identidade</div>
+    <div class="ms">Digite seu PIN de proprietário para visualizar os PINs dos funcionários.</div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-bottom:18px;" id="pinDotsConf">
+      <div class="pin-dot" id="pdc0"></div><div class="pin-dot" id="pdc1"></div>
+      <div class="pin-dot" id="pdc2"></div><div class="pin-dot" id="pdc3"></div>
+    </div>
+    <div class="pin-grid" style="max-width:280px;margin:0 auto;">
+      <button class="pin-btn" onclick="pinConf('1')">1</button>
+      <button class="pin-btn" onclick="pinConf('2')">2</button>
+      <button class="pin-btn" onclick="pinConf('3')">3</button>
+      <button class="pin-btn" onclick="pinConf('4')">4</button>
+      <button class="pin-btn" onclick="pinConf('5')">5</button>
+      <button class="pin-btn" onclick="pinConf('6')">6</button>
+      <button class="pin-btn" onclick="pinConf('7')">7</button>
+      <button class="pin-btn" onclick="pinConf('8')">8</button>
+      <button class="pin-btn" onclick="pinConf('9')">9</button>
+      <button class="pin-btn zero" onclick="pinConf('0')">0</button>
+      <button class="pin-btn" onclick="pinConfDel()">⌫</button>
+    </div>
+    <div class="pin-erro" id="pinConfErro"></div>
+    <div id="listaPinsConf" style="display:none;margin-top:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--am);margin-bottom:10px;">⚠️ Não compartilhe esta tela</div>
+      <div id="listaPinsItens"></div>
+    </div>
+    <button class="mb-s" onclick="fM('ovPins');pinConfDigitos='';renderPinConf();" style="width:100%;margin-top:14px;">Fechar</button>
   </div>
 </div>
 
@@ -943,6 +976,26 @@ async function renderInsights(){
   }}
 
 // FUNCIONÁRIOS
+// PIN de confirmação para ver lista de PINs
+let pinConfDigitos='';
+function abrirListaPins(){pinConfDigitos='';renderPinConf();$('listaPinsConf').style.display='none';$('pinConfErro').textContent='';abrirModal('ovPins');}
+function pinConf(d){if(pinConfDigitos.length>=4)return;pinConfDigitos+=d;renderPinConf();if(pinConfDigitos.length===4)setTimeout(verificarPinConf,120);}
+function pinConfDel(){pinConfDigitos=pinConfDigitos.slice(0,-1);renderPinConf();}
+function renderPinConf(){for(let i=0;i<4;i++){const el=$('pdc'+i);if(el)el.classList.toggle('filled',i<pinConfDigitos.length);}}
+async function verificarPinConf(){
+  try{
+    const r=await sb(`ge_restaurantes?id=eq.${REST_ID}&pin_dono=eq.${pinConfDigitos}&select=id`);
+    if(!r.length){$('pinConfErro').textContent='PIN incorreto.';pinConfDigitos='';renderPinConf();setTimeout(()=>$('pinConfErro').textContent='',2000);return;}
+    // PIN correto — mostrar lista
+    const funcs=await sb(`ge_funcionarios?restaurante_id=eq.${REST_ID}&select=nome,pin&order=nome.asc`);
+    const el=$('listaPinsItens');
+    if(!funcs.length){el.innerHTML='<div style="color:var(--t3);font-size:12px;text-align:center;padding:12px;">Nenhum funcionário cadastrado</div>';}
+    else{el.innerHTML=funcs.map(f=>`<div style="display:flex;justify-content:space-between;align-items:center;background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:11px 14px;margin-bottom:7px;"><span style="font-size:13px;font-weight:700;color:var(--t);">👤 ${f.nome}</span><span style="font-size:18px;font-weight:900;color:var(--gn);letter-spacing:4px;">${f.pin}</span></div>`).join('');}
+    $('listaPinsConf').style.display='block';
+    $('pinConfErro').textContent='';
+  }catch(e){toast('Erro','err');}
+}
+
 function liberarTudo(){['permHist','permInsights','permProdutos','permValor','permEstornar'].forEach(id=>{const el=$(id);if(el)el.checked=true;});}
 async function carregarFuncs(){try{todosFuncs=await sb(`ge_funcionarios?restaurante_id=eq.${REST_ID}&select=*&order=nome.asc`);}catch(e){todosFuncs=[];}}
 function renderFuncs(){const el=$('listaFuncs');if(!el)return;if(!todosFuncs.length){el.innerHTML='<div style="padding:14px;text-align:center;color:var(--t3);font-size:12px;">Nenhum funcionário cadastrado</div>';return;}el.innerHTML=todosFuncs.map(f=>`<div class="f-c" onclick="abrirFunc('${f.id}')"><div style="font-size:22px;width:36px;height:36px;border-radius:50%;background:var(--gn2);display:flex;align-items:center;justify-content:center;">${f.nome[0]||'?'}</div><div class="f-inf"><div class="f-n">${f.nome}</div><div class="f-s">Funcionário(a) · PIN: ••••</div></div><div style="color:var(--t3);">›</div></div>`).join('');}
@@ -1133,6 +1186,21 @@ document.addEventListener('click',e=>{['tipoSugsS','tipoSugsC'].forEach(id=>{con
 // INIT
 document.addEventListener('DOMContentLoaded',async()=>{
   const codLink=capturarCodigoDaURL();
+  // Se veio com ?cod= na URL, SEMPRE priorizar esse código — ignorar localStorage
+  if(codLink){
+    try{
+      const r=await sb(`ge_restaurantes?codigo_acesso=eq.${codLink}&select=*`);
+      if(r.length){
+        REST_ID=r[0].id;REST_NOME=r[0].nome;
+        localStorage.setItem('ge_rest_id',REST_ID);
+        localStorage.removeItem('ge_cod_pendente');
+        $('loginNome').textContent=r[0].nome;
+        $('loginTipo').textContent=r[0].tipo_negocio||'';
+        $('loginDono').textContent=r[0].nome_proprietario?'👑 '+r[0].nome_proprietario:'';
+        mostrarTela('telaLogin');pinDigitos='';renderPin();return;
+      }else{toast('Link inválido ou expirado','err');}
+    }catch(e){toast('Erro ao carregar estabelecimento','err');}
+  }
   const savedId=localStorage.getItem('ge_rest_id');
   if(savedId)REST_ID=savedId;
   if(REST_ID){
@@ -1153,18 +1221,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
       }
     }catch(e){}
   }
-  if(codLink){
-    try{
-      const r=await sb(`ge_restaurantes?codigo_acesso=eq.${codLink}&select=*`);
-      if(r.length){
-        REST_ID=r[0].id;localStorage.setItem('ge_rest_id',REST_ID);
-        $('loginNome').textContent=r[0].nome;
-        $('loginTipo').textContent=r[0].tipo_negocio||'';
-        $('loginDono').textContent=r[0].nome_proprietario?'👑 '+r[0].nome_proprietario:'';
-        mostrarTela('telaLogin');pinDigitos='';renderPin();return;
-      }
-    }catch(e){}
-  }
+  // codLink já tratado no início
   try{const total=await sb('ge_restaurantes?select=id&limit=1');if(total.length)mostrarTela('tela1Acesso');else mostrarTela('telaSetup');}catch(e){mostrarTela('telaSetup');}
 });
 </script>
